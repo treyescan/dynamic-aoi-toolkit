@@ -1,36 +1,19 @@
-import argparse
+import argparse, cv2, sys
 import pandas as pd
-import cv2, os, sys
-import time
+
+sys.path.append('../../')
+from utils.utils__resize_with_aspect_ratio import ResizeWithAspectRatio
 
 # parse the arguments used to call this script
 parser = argparse.ArgumentParser()
 parser.add_argument('--video', help='path of video file', type=str)
-parser.add_argument('--data', help='path of the csv file', type=str)
-parser.add_argument('--offset', help='offset of the frames in the data set', type=int, default=0)
+parser.add_argument('--aois', help='path of the aois file', type=str)
 parser.add_argument('--start_frame', help='start playing at frame', type=int, default=0)
 
 args = parser.parse_args()
 video_path = args.video
-data_path = args.data
-offset = args.offset
-start_frame = args.start_frame - 1
-# start_frame = 0
-
-def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
-    dim = None
-    (h, w) = image.shape[:2]
-
-    if width is None and height is None:
-        return image
-    if width is None:
-        r = height / float(h)
-        dim = (int(w * r), height)
-    else:
-        r = width / float(w)
-        dim = (width, int(h * r))
-
-    return cv2.resize(image, dim, interpolation=inter)
+data_path = args.aois
+start_frame = args.start_frame
 
 # Read data file
 df = pd.read_csv(data_path, header=0)
@@ -42,12 +25,13 @@ total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
 # Write video
 out = cv2.VideoWriter(
-        'video_with_labels.mp4',
-        cv2.VideoWriter_fourcc(*'XVID'),
-        cap.get(cv2.CAP_PROP_FPS),
-        (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-    )
+    'video_with_labels.mp4',
+    cv2.VideoWriter_fourcc(*'XVID'),
+    cap.get(cv2.CAP_PROP_FPS),
+    (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+)
 
+# Try to open video
 if (cap.isOpened()== False):  
     print("Error opening video file") 
 else:
@@ -75,11 +59,7 @@ while(cap.isOpened()):
         ret, frame = cap.read()
 
         if ret == True:
-            frame_nr = frame_nr + 1
-            overlays = df[df['Frame'] == (frame_nr - offset)]
-
-            # print('considering frame {}'.format(frame_nr))
-            # print('found {} overlay(s) in data frame'.format(len(overlays)))
+            overlays = df[df['Frame'] == frame_nr]
 
             # Draw frame nr on frame
             cv2.rectangle(frame, (0, 0), (400, 80), (255, 255, 255), -1, 1)
@@ -109,6 +89,11 @@ while(cap.isOpened()):
             # Writing the resulting frame
             print('saving frame {}/{}'.format(frame_nr, total_frames))
             out.write(frame)
+
+            # time.sleep(.5)
+
+            # Increase the frame number to go to the next frame
+            frame_nr = frame_nr + 1
     
         # Break the loop 
         else:  

@@ -6,6 +6,7 @@ sys.path.append('../../')
 import __constants
 from utils.utils__aois import prepare_aois_df
 from utils.utils__margin_calculator import correct_aoi
+from utils.utils__resize_with_aspect_ratio import ResizeWithAspectRatio
 
 # BGR colors
 colors = [
@@ -38,35 +39,20 @@ colors = [
 ]
 
 # Set window dimensions
-FRAME_WIDTH = int(2880 * 0.4)
+FRAME_WIDTH = int(__constants.total_surface_width * 0.2)
 
 # parse the arguments used to call this script
 parser = argparse.ArgumentParser()
 parser.add_argument('--video', help='path of video file', type=str)
-parser.add_argument('--data', help='path of the AOI csv file', type=str)
+parser.add_argument('--aois', help='path of the AOI csv file', type=str)
 parser.add_argument('--task', help='of which task do we need to plot gaze positions', type=str)
 parser.add_argument('--start_frame', help='start playing at frame (0 = start)', type=int, default=0)
 
 args = parser.parse_args()
 video_path = args.video
-data_path = args.data 
+data_path = args.aois 
 task = args.task
 start_frame = args.start_frame
-
-def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
-    dim = None
-    (h, w) = image.shape[:2]
-
-    if width is None and height is None:
-        return image
-    if width is None:
-        r = height / float(h)
-        dim = (int(w * r), height)
-    else:
-        r = width / float(w)
-        dim = (width, int(h * r))
-
-    return cv2.resize(image, dim, interpolation=inter)
 
 # Open all gaze position files (gp.csv in {task} folder of all participants)
 dfs_gp = []
@@ -142,9 +128,6 @@ while(cap.isOpened()):
                         
                 gp_index = gp_index + 1
 
-            # print('considering frame {}'.format(frame_nr))
-            # print('found {} overlay(s) in data frame'.format(len(overlays)))
-
             # Draw frame nr on frame
             cv2.rectangle(frame, (0, 0), (400, 80), (255, 255, 255), -1, 1)
             cv2.putText(frame, "Frame: {}".format(frame_nr), (0, 50), 
@@ -153,8 +136,7 @@ while(cap.isOpened()):
             # Draw overlays on frame
             for index, overlay in overlays.iterrows():
 
-                # Since we have "prepared" the aois into the new coordinates
-                # calculate this back
+                # Since we have "prepared" the aois into the new coordinates calculate this back
                 y1 = overlay['y1'] + __constants.total_surface_height/2
                 y2 = overlay['y2'] + __constants.total_surface_height/2
                 x1 = overlay['x1'] + __constants.total_surface_width/2

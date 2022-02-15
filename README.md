@@ -118,7 +118,7 @@ TODO:
 ```bash
 # for one participant
 cd tools/overlay/
-python3 overlay_single_participant.py --video="video.mp4" --data="aois.csv" --participant="{folder to particpant}" --start_frame=800
+python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --participant="{folder to particpant}" --start_frame=800
 ```
 
 **Usage:**
@@ -128,7 +128,7 @@ TODO:
 ```bash
 # for multiple participants
 cd tools/overlay/
-python3 tools/overlay_multiple_participants.py --video="video.mp4" --data="aois.csv" --deel="{folder of participants}" --start_frame=800
+python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --deel="{folder of participants}" --start_frame=800
 ```
 
 **Usage:**
@@ -142,7 +142,7 @@ TODO:
 
 ```bash
 cd tools/overlay/
-python3 overlay_only_aois.py --video="video.mp4" --data="aois.csv" --start_frame=1000
+python3 overlay_only_aois.py --video="video.mp4" --aois="aois.csv" --start_frame=1000
 ```
 
 **Usage**

@@ -1,74 +1,47 @@
-import argparse
+import argparse, cv2, sys, math
 import pandas as pd
-import cv2, os, sys
-import time, math
 import numpy as np
 
-sys.path.append('../4_gaze_roi_analysis')
+sys.path.append('../../')
 import __constants
-from utils__aois import prepare_aois_df
-from utils__margin_calculator import correct_aoi
+from utils.utils__aois import prepare_aois_df
+from utils.utils__margin_calculator import correct_aoi
+from utils.utils__resize_with_aspect_ratio import ResizeWithAspectRatio
 
 # Set window dimensions
-FRAME_WIDTH = int(2880 * 0.4)
+FRAME_WIDTH = int(__constants.total_surface_width * 0.2)
 
 # parse the arguments used to call this script
 parser = argparse.ArgumentParser()
 parser.add_argument('--video', help='path of video file', type=str)
-parser.add_argument('--data', help='path of the ROI csv file', type=str)
+parser.add_argument('--aois', help='path of the AOI csv file', type=str)
 parser.add_argument('--participant', help='path of the participant data files', type=str)
-parser.add_argument('--offset', help='offset of the frames in the data set', type=int, default=0)
 parser.add_argument('--start_frame', help='start playing at frame', type=int, default=0)
 
 args = parser.parse_args()
 video_path = args.video
-data_path = args.data # ROI data
+data_path = args.aois
 participant_folder = args.participant
-offset = args.offset
-start_frame = args.start_frame - 1
+start_frame = args.start_frame
 
 gaze_data_path = '{}/gp.csv'.format(participant_folder)
-annotations_data_path = '{}/annotations.csv'.format(participant_folder)
-
-def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
-    dim = None
-    (h, w) = image.shape[:2]
-
-    if width is None and height is None:
-        return image
-    if width is None:
-        r = height / float(h)
-        dim = (int(w * r), height)
-    else:
-        r = width / float(w)
-        dim = (width, int(h * r))
-
-    return cv2.resize(image, dim, interpolation=inter)
+# annotations_data_path = '{}/annotations.csv'.format(participant_folder)
 
 # Read data file
 df = pd.read_csv(data_path, header=0)
 df_gp = pd.read_csv(gaze_data_path, header=0)
-df_a = pd.read_csv(annotations_data_path, header=0)
+# df_a = pd.read_csv(annotations_data_path, header=0)
 
 # Prepare data
 df = prepare_aois_df(df)
 
-# NOTE: the timestamps of the merged gaze positions are normalized in merge_gaze_positions
-
-if df_a['timestamp'][0] < 0:
-    df_a['actual_time'] = df_a['timestamp'] + abs(df_gp.loc[0, 'gaze_timestamp'])
-else:
-    df_a['actual_time'] = df_a['timestamp'] - abs(df_gp.loc[0, 'gaze_timestamp'])
-
-df_a['frame'] = df_a['actual_time']*25 + 0.00001
-df_a['frame'] = df_a['frame'].astype(int)
-
-# TODO: remove in january 2022
-df_gp['frame'] = np.ceil(df_gp['frame'])
-df_gp['frame'] = df_gp['frame'].astype(int)
-
-# print(df_a.head())
-# sys.exit()
+# NB: currently unused
+# if df_a['timestamp'][0] < 0:
+#     df_a['actual_time'] = df_a['timestamp'] + abs(df_gp.loc[0, 'gaze_timestamp'])
+# else:
+#     df_a['actual_time'] = df_a['timestamp'] - abs(df_gp.loc[0, 'gaze_timestamp'])
+# df_a['frame'] = df_a['actual_time']*25 + 0.00001
+# df_a['frame'] = df_a['frame'].astype(int)
 
 # Read video
 cap = cv2.VideoCapture(video_path)
@@ -77,12 +50,13 @@ total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
 # Write video
 out = cv2.VideoWriter(
-        'video_with_labels_and_gaze.mp4',
-        cv2.VideoWriter_fourcc(*'XVID'),
-        cap.get(cv2.CAP_PROP_FPS),
-        (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-    )
+    'video_with_labels_and_gaze.mp4',
+    cv2.VideoWriter_fourcc(*'XVID'),
+    cap.get(cv2.CAP_PROP_FPS),
+    (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+)
 
+# Try to open video
 if (cap.isOpened()== False):  
     print("Error opening video file") 
 else:
@@ -110,21 +84,16 @@ while(cap.isOpened()):
         ret, frame = cap.read()
 
         if ret == True:
-            frame_nr = frame_nr + 1
-            overlays = df[df['Frame'] == (frame_nr - offset)]
-            
-            # HIERZO: inladen GP voor tijd (ongeveer) rond hier
-            actual_time  = frame_nr / 25
-            # print('considering frame {} -> actual time: {}'.format(frame_nr, actual_time))
-
+            overlays = df[df['Frame'] == frame_nr]
+          
             # Draw if hazard button is pressed
-            found_annotations = df_a[(df_a['frame'] >= frame_nr - 1) & (df_a['frame'] < frame_nr - 1 + 15)]
-            print('--- found {} annotations on frame {}'.format(len(found_annotations), frame_nr - 1))
+            # found_annotations = df_a[(df_a['frame'] >= frame_nr - 1) & (df_a['frame'] < frame_nr - 1 + 15)]
+            # print('--- found {} annotations on frame {}'.format(len(found_annotations), frame_nr - 1))
 
-            if len(found_annotations) > 0:
-                cv2.rectangle(frame, (450, 0), (1200, 80), (0, 0, 255), -1, 1)
-                cv2.putText(frame, "HAZARD BUTTON PRESSED", (500, 50), 
-                                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 4, cv2.LINE_AA);
+            # if len(found_annotations) > 0:
+            #     cv2.rectangle(frame, (450, 0), (1200, 80), (0, 0, 255), -1, 1)
+            #     cv2.putText(frame, "HAZARD BUTTON PRESSED", (500, 50), 
+            #                     cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 4, cv2.LINE_AA);
 
             # Draw first GPs
             gaze_position_overlays = df_gp[df_gp['frame'] == frame_nr]
@@ -135,12 +104,7 @@ while(cap.isOpened()):
                     x = gaze_position['x'] + __constants.total_surface_width/2
                     y = 1200 - (gaze_position['y'] + __constants.total_surface_height/2) # change back to "old" coordinate system
 
-                    # print('x: {}, y: {}'.format(x,y))
-
                     cv2.circle(frame, (int(x), int(y)), 20, (161, 254, 141), -1)
-
-            # print('considering frame {}'.format(frame_nr))
-            # print('found {} overlay(s) in data frame'.format(len(overlays)))
 
             # Draw frame nr on frame
             cv2.rectangle(frame, (0, 0), (400, 80), (255, 255, 255), -1, 1)
@@ -150,8 +114,7 @@ while(cap.isOpened()):
             # Draw overlays on frame
             for index, overlay in overlays.iterrows():
 
-                # Since we have "prepared" the aois into the new coordinates
-                # calculate this back
+                # Since we have "prepared" the aois into the new coordinates calculate this back
                 y1 = overlay['y1'] + __constants.total_surface_height/2
                 y2 = overlay['y2'] + __constants.total_surface_height/2
                 x1 = overlay['x1'] + __constants.total_surface_width/2
@@ -187,7 +150,6 @@ while(cap.isOpened()):
             # Display the resulting frame
             frameToDisplay = ResizeWithAspectRatio(frame, width=FRAME_WIDTH) 
 
-
             # comment  this for faster export            
             cv2.imshow('Frame', frameToDisplay) 
             cv2.moveWindow('Frame', 20, 20)
@@ -197,6 +159,9 @@ while(cap.isOpened()):
             out.write(frame)
 
             # time.sleep(.5)
+
+            # Increase the frame number to go to the next frame
+            frame_nr = frame_nr + 1
     
         # Break the loop 
         else:  
