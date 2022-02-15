@@ -122,7 +122,7 @@ while(cap.isOpened()):
                 for index, gaze_position in gaze_position_overlays.iterrows():
                     if not math.isnan(gaze_position['x']) and not math.isnan(gaze_position['y']):
                         x = gaze_position['x'] + __constants.total_surface_width/2
-                        y = 1200 - (gaze_position['y'] + __constants.total_surface_height/2)
+                        y = __constants.total_surface_height - (gaze_position['y'] + __constants.total_surface_height/2)
 
                         cv2.circle(frame, (int(x), int(y)), 20, color, -1)
                         
@@ -141,8 +141,8 @@ while(cap.isOpened()):
                 y2 = overlay['y2'] + __constants.total_surface_height/2
                 x1 = overlay['x1'] + __constants.total_surface_width/2
                 x2 = overlay['x2'] + __constants.total_surface_width/2
-                y1 = 1200-y1 # Inverse the y coordinates to match with "old" coordinate system
-                y2 = 1200-y2 
+                y1 = __constants.total_surface_height-y1 # Inverse the y coordinates to match with "old" coordinate system
+                y2 = __constants.total_surface_height-y2 
 
                 if 'type' in overlay and overlay['type'] == 'may':
                     color = (254, 141, 141)
