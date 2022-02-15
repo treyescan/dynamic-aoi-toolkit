@@ -85,7 +85,7 @@ python3 object_tracking.py --video="video.mp4" --start_frame=70
 #### Method 2: Selection ROI
 
 ```bash
-python3 roi_selection.py --name="video.mp4" --start_frame=100
+python3 roi_selection.py --video="video.mp4" --start_frame=100
 ```
 
 **Usage:**

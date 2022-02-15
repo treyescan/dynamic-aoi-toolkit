@@ -1,32 +1,30 @@
-import cv2, os, sys
-import argparse
+import cv2, os, sys, time, argparse, glob
 from csv import writer
-import glob
-import time
+
+sys.path.append('../../')
+import __constants
 
 # Original video dimensions
-VIDEO_WIDTH = 5760
-VIDEO_HEIGHT = 1200
+VIDEO_WIDTH = __constants.total_surface_width
+VIDEO_HEIGHT = __constants.total_surface_height
 
 # Set window dimensions
-FRAME_WIDTH = int(2880 * 0.4)
-FRAME_HEIGHT = int(600 * 0.4)
+FRAME_WIDTH = int(__constants.total_surface_width * 0.2)
+FRAME_HEIGHT = int(__constants.total_surface_height * 0.2)
 
 def main():
     # parse the arguments used to call this script
     parser = argparse.ArgumentParser()
-    parser.add_argument('--name', required=True, help='name of video file', type=str)
-    # parser.add_argument('--label', required=True, help='label of tracked object', type=str)
+    parser.add_argument('--video', required=True, help='name of video file', type=str)
     parser.add_argument('--step', help='How many frames to skip in between', type=float, default=40)
-    parser.add_argument('--start-frame', help='Starting frame (first = 0)', type=float, default=1)
-    parser.add_argument('--max-frames', help='Maximum number of frames processed', type=int, default=10000)
+    parser.add_argument('--start_frame', help='Starting frame (first = 0)', type=float, default=1)
+    parser.add_argument('--max_frames', help='Maximum number of frames processed', type=int, default=10000)
     parser.add_argument('--output_file', help='Filename', type=str, default="output.csv")
 
     args = parser.parse_args()
     start_frame = args.start_frame
     max_frames = args.max_frames
-    # given_label = args.label
-    video_name = args.name
+    video_name = args.video
     step = args.step
 
     # QUESTIONS
@@ -147,9 +145,6 @@ def compute_transition_rois(selected_rois):
     frame_of_first_roi = list(selected_rois.keys())[0]
     frame_of_last_roi = list(selected_rois.keys())[-1]
     frame_range = range(frame_of_first_roi, frame_of_last_roi + 1)
-
-    # print('frame of first roi: {}'.format(frame_of_first_roi))
-    # print('frame of last roi: {}'.format(frame_of_last_roi))
 
     # a dict to store all rois
     computed_rois = {}
@@ -310,7 +305,7 @@ def save_to_csv(output_file_name, computed_rois, start_frame, must_or_may, CBR_M
             y2 = int(round(y1 + roi[3]/FRAME_WIDTH * VIDEO_WIDTH))
 
             csv_writer.writerow([
-                (fnr + start_frame + 1), 
+                (fnr + start_frame), 
                 label, category, x1, x2, y1, y2,
                 ('must' if must_or_may == 1 else 'may'),
                 CBR_MUST, CBR_MAY, drivers_MUST, drivers_MAY
