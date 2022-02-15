@@ -4,7 +4,7 @@ This toolkit includes tools to measure widescreen, dynamic, areas of interests (
 
 ## Table of Contents
 
-TODO: (joris) links maken van TOC
+> TODO: (joris) links maken van TOC
 
 1. Installation
 1. Usage
@@ -36,8 +36,8 @@ After this, open `__constants.py` and change the variable `data_folder` to point
 
 ### 1. Data structure (data folder)
 
-TODO: (joris) even opschonen en visueel aantrekkelijker maken
-TODO: (yasmin) alles goed opschrijven
+> TODO: (joris) even opschonen en visueel aantrekkelijker maken
+> TODO: (yasmin) alles goed opschrijven
 
 - data/
 
@@ -56,7 +56,7 @@ TODO: (yasmin) alles goed opschrijven
   - output/
     - P-001/
       - task1/
-        - TODO:
+        > - TODO:
       - ... (more task)
     - ... (more participants)
   - videos/
@@ -106,12 +106,12 @@ python3 concat_files.py --folder data/testvideo
 ```
 
 1. Make sure all output files from script 1 and 2 are saved in one folder
-1. Run the command above, replacing `data/testvideo` with the path to your output folder
-1. The files will be concatenated to a single file. The console will show you the path of this file
+1. Run the command above, replacing data/testvideo` with the path to your output folder
+1. The files will be concatenated to a single file (`combined_data/dataset.csv`). The console will show you the path of this file
 
 ### 3. AOI Overlay
 
-TODO:
+> TODO:
 
 #### Overlaying ROIS and gaze positions over a video
 
@@ -123,7 +123,7 @@ python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --pa
 
 **Usage:**
 
-TODO:
+> TODO:
 
 ```bash
 # for multiple participants
@@ -133,7 +133,7 @@ python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.
 
 **Usage:**
 
-TODO:
+> TODO:
 
 1. all gp.csv in {folder of participants} are fetched (last one)
 1. output: video_with_multiple_gp.mp4
@@ -154,7 +154,7 @@ python3 overlay_only_aois.py --video="video.mp4" --aois="aois.csv" --start_frame
 
 ### 4. AOI Hit detection
 
-TODO:
+> TODO:
 
 ```bash
 python3 analyse.py
@@ -162,7 +162,7 @@ python3 analyse.py
 
 **Usage**
 
-1. TODO:
+> 1. TODO:
 
 ## 3. Contribution
 
