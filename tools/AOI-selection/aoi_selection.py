@@ -12,6 +12,16 @@ VIDEO_HEIGHT = __constants.total_surface_height
 FRAME_WIDTH = int(__constants.total_surface_width * 0.2)
 FRAME_HEIGHT = int(__constants.total_surface_height * 0.2)
 
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 def main():
     # parse the arguments used to call this script
     parser = argparse.ArgumentParser()
@@ -20,12 +30,14 @@ def main():
     parser.add_argument('--start_frame', help='Starting frame (first = 0)', type=float, default=1)
     parser.add_argument('--max_frames', help='Maximum number of frames processed', type=int, default=10000)
     parser.add_argument('--output_file', help='Filename', type=str, default="output.csv")
+    parser.add_argument("--manual", type=str2bool, nargs='?', const=True, default=False, help="Do you want to select all frames manually?")
 
     args = parser.parse_args()
     start_frame = args.start_frame
     max_frames = args.max_frames
     video_name = args.video
     step = args.step
+    manual = args.manual
 
     # QUESTIONS
     # Label?
@@ -74,7 +86,7 @@ def main():
     output_file_name = generate_file_name(given_label)
 
     # Get all ROI's on specific frames (store those in a dictionary)
-    selected_rois = roi_selection(video_name, start_frame, step, max_frames)
+    selected_rois = roi_selection(video_name, start_frame, step, max_frames, manual)
 
     # At least 2 ROI's must have been selected
     if len(selected_rois) < 2:
@@ -94,7 +106,7 @@ def main():
     save_video_confirmation(output_file_name)
 
 # Start the selection process
-def roi_selection(file, start_frame, step, max_frames):
+def roi_selection(file, start_frame, step, max_frames, manual):
     cap = cv2.VideoCapture(file)
     cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
 
@@ -114,14 +126,14 @@ def roi_selection(file, start_frame, step, max_frames):
             break
 
         # When hitting S, the video will pause and we may select a ROI for that frame
-        if key == ord("s") or frames == 1:
-            cv2.putText(frame, "Selecting ROI on frame {} and/or hit [space] to continue.".format(frames - 1), (30, 30), 
+        if key == ord("s") or frames == 0 or manual:
+            cv2.putText(frame, "Selecting ROI on frame {} and/or hit [space] to continue.".format(frames), (30, 30), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1, cv2.LINE_AA);
             
             roiBB = cv2.selectROI('frame', frame, fromCenter=False) 
 
             if not (roiBB[2] == 0 or roiBB[3] == 0): # if no width or height
-                selected_rois[frames - 1] = roiBB;
+                selected_rois[frames] = roiBB;
         else:
             cv2.putText(frame, "Hit [s] to select another ROI or hit [q] to compute & quit.", (30, 30), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1, cv2.LINE_AA);

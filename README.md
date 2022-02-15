@@ -85,7 +85,11 @@ python3 aoi_tracking.py --video="video.mp4" --start_frame=70
 #### Method 2: Selection ROI
 
 ```bash
+# use this to select some frames and let the script interpolate the gaps
 python3 aoi_selection.py --video="video.mp4" --start_frame=100
+
+# use this to select each frame manually
+python3 aoi_selection.py --video="video.mp4" --start_frame=100 --manual
 ```
 
 **Usage:**
