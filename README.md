@@ -70,7 +70,7 @@ The goal of the AOI Selector is to translate humanly-identified MUST/MAY be seen
 #### Method 1: Tracking objects semi-automatically
 
 ```bash
-python3 object_tracking.py --name="video.mp4" --start_frame=70
+python3 object_tracking.py --video="video.mp4" --start_frame=70
 ```
 
 **Usage:**

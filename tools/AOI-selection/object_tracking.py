@@ -1,24 +1,23 @@
-import cv2, os, sys
-import argparse
+# adaptation of Video_bbox by sachinruk
+# @see: https://github.com/sachinruk/Video_bbox
+
+import cv2, os, sys, argparse, glob
 from csv import writer
-import glob
+
+sys.path.append('../../')
+import __constants
 
 # Original video dimensions
-VIDEO_WIDTH = 5760
-VIDEO_HEIGHT = 1200
+VIDEO_WIDTH = __constants.total_surface_width
+VIDEO_HEIGHT = __constants.total_surface_height
 
 # Set window dimensions
-FRAME_WIDTH = int(2880 * 0.4)
-FRAME_HEIGHT = int(600 * 0.4)
-
-# create directories to store individual frames and their labels
-# os.makedirs("./labels", exist_ok=True)
-# os.makedirs("./images", exist_ok=True)
+FRAME_WIDTH = int(__constants.total_surface_width * 0.2)
+FRAME_HEIGHT = int(__constants.total_surface_height * 0.2)
 
 # parse the arguments used to call this script
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', help='name of video file', type=str)
-# parser.add_argument('--label', help='label of tracked object', type=str)
+parser.add_argument('--video', help='name of video file', type=str)
 parser.add_argument('--max_obj', help='Maximum number of objects followed', type=int, default=6)
 parser.add_argument('--max_frames', help='Maximum number of frames processed', type=int, default=10000)
 parser.add_argument('--thresh', help='Threshold for scene changes', type=float, default=2)
@@ -29,8 +28,7 @@ args = parser.parse_args()
 max_obj = args.max_obj
 max_frames = args.max_frames
 thresh = args.thresh
-start_frame = args.start_frame - 1
-# given_label=args.label
+start_frame = args.start_frame
 may_play=True
 
 # QUESTIONS
@@ -98,12 +96,14 @@ else:
     last_found_id = found_ids[-1]
     unique_id = last_found_id + 1
 
+# Generate unique ID (incremented from last known ID) and create file name
 unique_label = given_label + '_' + str(unique_id)
 output_file_name = 'output/' + unique_label + '.csv'
 
-fname =  os.path.basename(args.name)[:-4] #filename without extentsion
-video = cv2.VideoCapture(args.name) # Read video
+fname =  os.path.basename(args.video)[:-4] #filename without extentsion
+video = cv2.VideoCapture(args.video) # Read video
 
+# Create csv with headers
 csv_file = output_file_name
 with open(csv_file, 'w', newline='') as write_obj:
     csv_writer = writer(write_obj)
@@ -127,13 +127,11 @@ if not ok:
     print("Cannot read video file")
     may_play = False
 
-# h, w, _ = frame.shape
-# import pdb; pdb.set_trace()
 h = FRAME_HEIGHT
 w = FRAME_WIDTH
 initBB = None
 
-frames = 1
+frames = 0
 prev_mean = 0
 
 cv2.namedWindow("Frame")
@@ -159,7 +157,7 @@ while ok and frames <= max_frames and may_play:
 
     # if the 's' key is selected, we are going to "select" a bounding
     # box to track
-    if key == ord("s") or frames == 1 or frame_diff > thresh:
+    if key == ord("s") or frames == 0 or frame_diff > thresh:
         trackers = cv2.legacy.MultiTracker_create()
         for i in range(max_obj):
             # select the bounding box of the object we want to track (make
@@ -196,9 +194,6 @@ while ok and frames <= max_frames and may_play:
                         screen_bbox_p1 = (int(x1rel*FRAME_WIDTH), int(y1rel*FRAME_HEIGHT))
                         screen_bbox_p2 = (int(x2rel*FRAME_WIDTH), int(y2rel*FRAME_HEIGHT))
                         cv2.rectangle(frame, screen_bbox_p1, screen_bbox_p2, (255,0,0), 2, 1)
-                        
-                        # print('point 1: {},{}'.format(screen_bbox_p1[0], screen_bbox_p1[1]))
-                        # print('point 2: {},{}'.format(screen_bbox_p2[0], screen_bbox_p2[1]))
 
                         # this is for us, making a csv
                         x1 = (x1rel*VIDEO_WIDTH)
@@ -208,11 +203,11 @@ while ok and frames <= max_frames and may_play:
  
                         csv_writer = writer(write_obj)
                         csv_writer.writerow([                   
-                                            (frames + start_frame),         
-                                            unique_label, category,
-                                            x1, x2, y1, y2, ('must' if must_or_may == 1 else 'may'),
-                                            CBR_MUST, CBR_MAY, drivers_MUST, drivers_MAY
-                                        ])
+                            (frames + start_frame),         
+                            unique_label, category,
+                            x1, x2, y1, y2, ('must' if must_or_may == 1 else 'may'),
+                            CBR_MUST, CBR_MAY, drivers_MUST, drivers_MAY
+                        ])
 
         else:
             initBB = None
