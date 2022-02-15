@@ -70,7 +70,7 @@ The goal of the AOI Selector is to translate humanly-identified MUST/MAY be seen
 #### Method 1: Tracking objects semi-automatically
 
 ```bash
-python3 object_tracking.py --video="video.mp4" --start_frame=70
+python3 aoi_tracking.py --video="video.mp4" --start_frame=70
 ```
 
 **Usage:**
@@ -85,7 +85,7 @@ python3 object_tracking.py --video="video.mp4" --start_frame=70
 #### Method 2: Selection ROI
 
 ```bash
-python3 roi_selection.py --video="video.mp4" --start_frame=100
+python3 aoi_selection.py --video="video.mp4" --start_frame=100
 ```
 
 **Usage:**
