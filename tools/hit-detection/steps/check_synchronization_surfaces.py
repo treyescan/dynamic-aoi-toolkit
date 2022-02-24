@@ -24,7 +24,7 @@ def check_synchronization_surfaces(participant_id, task_id, synchronization_file
     synchronization_surface['frame'] = synchronization_surface['gaze_timestamp'] * 25
 
     # Fetch expected frame numbers of the synchronization surfaces
-    input_file_name = '../../../data/videos/start_end_frames/synchronisation/{}'.format(synchronization_file)
+    input_file_name = '{}/videos/start_end_frames/synchronization/{}'.format(__constants.data_folder, synchronization_file)
 
     # Fetch all start and end frames of synchronization surfaces
     a_file = open(input_file_name, "r")

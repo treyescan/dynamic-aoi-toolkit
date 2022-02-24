@@ -29,6 +29,8 @@ def apply_median_filter_on_coordinates(participant_id, task_id, progress, task):
     df = df.drop(columns=['true_x_scaled', 'true_y_scaled'])
     df = df.rename(columns={"true_x_scaled_srm": "true_x_scaled", "true_y_scaled_srm": "true_y_scaled"})
 
+    progress.advance(task)
+
     # Write to csv
     progress.print('[bold green]Done! We saved to {} with {} rows'.format(output_file_name, len(df)))
     df.to_csv(output_file_name)

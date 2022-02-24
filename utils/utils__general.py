@@ -1,8 +1,10 @@
-import __constants
+import sys
+sys.path.append('../')
+
+import __constants, os.path
 from genericpath import isdir
 from os import mkdir
-from utils__console import console
-import os.path
+from utils.utils__console import console
 
 def we_are_not_skipping_task(current_task, starting_task, progress, tasks):
     if(current_task < starting_task):
@@ -22,7 +24,7 @@ def ask_for_participant_id():
     return id
 
 def ask_for_task_id():
-    file = console.input("Provide the [bold cyan]video ID (e.g. Deel 1)[/bold cyan] (for input folder and both AOI & synchronisation file) [i bright_black](default: Deel1)[/i bright_black]: ") or "Deel1"
+    file = console.input("Provide the [bold cyan]task ID (e.g. Deel 1)[/bold cyan] (for input folder and both AOI & synchronization file) [i bright_black](default: Deel1)[/i bright_black]: ") or "Deel1"
     check_aois_files(file)
     return file
 
@@ -32,9 +34,9 @@ def ask_for_starting_task():
 def check_aois_files(file):
     if file == "":
         raise Exception('No AOI file provided')
-    elif not os.path.isfile('../aois/{}.csv'.format(file)):
+    elif not os.path.isfile('{}/input-aoi/{}.csv'.format(__constants.data_folder, file)):
         raise Exception('AOIs file for {}.csv not found'.format(file))
-    elif not os.path.isfile('../start_end_frames/synchronisation/{}.json'.format(file)):
+    elif not os.path.isfile('{}/videos/start_end_frames/synchronization/{}.json'.format(__constants.data_folder, file)):
         raise Exception('synchronization file for {}.json not found'.format(file))
 
 def check_participant_id(id, task_id):
