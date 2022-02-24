@@ -1,8 +1,9 @@
 import sys
+sys.path.append('../../')
+
 from rich.progress import Progress, TimeElapsedColumn, BarColumn, TimeRemainingColumn
 from rich.prompt import Confirm
 
-sys.path.append('../../')
 
 # our own utilities needed
 from utils.utils__general import \
