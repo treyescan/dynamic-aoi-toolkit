@@ -1,23 +1,23 @@
 import sys
-import pandas as pd
-import numpy as np 
-import os.path, json
-from scipy.interpolate import PchipInterpolator
-import matplotlib.pyplot as plt
 sys.path.append('../../../')
 
-import __constants
+import __constants,  os.path, json
+import pandas as pd
+import numpy as np 
+from scipy.interpolate import PchipInterpolator
+import matplotlib.pyplot as plt
+
 from utils.utils__general import show_error
 
-def identify_gaps_and_to_linear_time(participant_id, video_id, progress, task):
+def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
     input_file_name = '{}/{}/{}/merged_mf_gp.csv'.format(
-        __constants.input_folder, participant_id, video_id)
+        __constants.input_folder, participant_id, task_id)
 
     output_file_name = '{}/{}/{}/gp.csv'.format(
-        __constants.input_folder, participant_id, video_id)
+        __constants.input_folder, participant_id, task_id)
 
-    text_file = '../outputs/{}/{}/number_of_filtered_rows.txt'.format(
-        participant_id, video_id)
+    text_file = '{}/{}/{}/number_of_filtered_rows.txt'.format(
+        __constants.output_folder, participant_id, task_id)
     
     # Check if our input file exists
     if not os.path.isfile(input_file_name):
@@ -126,7 +126,7 @@ def identify_gaps_and_to_linear_time(participant_id, video_id, progress, task):
             currentGapStartedAtIndex = np.NaN
 
     # Save gap indexes to file
-    gap_timestamps_file = '../outputs/{}/{}/gap_timestamps.json'.format(participant_id, video_id)
+    gap_timestamps_file = '{}/{}/{}/gap_timestamps.json'.format(__constants.output_folder, participant_id, task_id)
 
     file_handle = open(gap_timestamps_file, "w")
     json.dump(gap_timestamps_to_save, file_handle)
@@ -140,12 +140,13 @@ def identify_gaps_and_to_linear_time(participant_id, video_id, progress, task):
             interpolatedRows, percentage, percentage_nan_rows))
 
     # Interpolate to linear time scale
-    gp = to_lin_time(progress, df, output_file_name, participant_id, video_id)
+    gp = to_lin_time(progress, df, output_file_name, participant_id, task_id)
     
     # Gaps > 75ms +/- (__constants.add_gap_samples) seconds naar NaN
     # Now, check in the original dataframe where we have gaps (we saved this before)
     # NaN the x,y in rows where we know there is a gap with (__constants.add_gap_samples) seconds margin
-    gap_timestamps_file = '../outputs/{}/{}/gap_timestamps.json'.format(participant_id, video_id)
+    gap_timestamps_file = '{}/{}/{}/gap_timestamps.json'.format(
+        __constants.output_folder, participant_id, task_id)
     a_file = open(gap_timestamps_file, "r")
     gap_timestamps = json.loads(a_file.read())
 
@@ -163,13 +164,12 @@ def identify_gaps_and_to_linear_time(participant_id, video_id, progress, task):
     progress.print("Done! We will start outputting the dataframe to a csv file. This will take a second.")
     progress.print('[bold green]We are done! The new csv is outputted to {} and contains {} rows.'.format(output_file_name, len(gp)))
 
-    # sys.exit()
-
-def to_lin_time(progress, original_gp, output_file_name, participant_id, video_id):
+def to_lin_time(progress, original_gp, output_file_name, participant_id, task_id):
     first_timestamp = original_gp.actual_time.iloc[0]  
     last_timestamp = original_gp.actual_time.iloc[-1] 
     
     #TODO: not necessary step
+    
     # create gp df without nans (otherwise we cant interpolate)
     gp = original_gp[original_gp['true_x_scaled'].notna()] # NB: x and y are the same
 

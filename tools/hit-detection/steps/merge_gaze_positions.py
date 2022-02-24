@@ -1,15 +1,16 @@
 import sys
 sys.path.append('../../../')
+
 import __constants
 import pandas as pd
 
-def merge_gaze_positions(participant_id, video_id, progress, task):
+def merge_gaze_positions(participant_id, task_id, progress, task):
     ## Variables
     surfaces_base_name = '{}/{}/{}/gaze_positions_on_surface_Surface{:d}WB.csv'
     dummy_surface_base_name = '{}/{}/{}/gaze_positions_on_surface_dummysurface.csv'
     synchronization_surface_base_name = '{}/{}/{}/gaze_positions_on_surface_ijksurface.csv'
 
-    output_file_name = '{}/{}/{}/merged_raw_gp.csv'.format(__constants.input_folder, participant_id, video_id)
+    output_file_name = '{}/{}/{}/merged_raw_gp.csv'.format(__constants.input_folder, participant_id, task_id)
     surfaces = __constants.surfaces # surface meta data
 
     dfs = {} # a list of all pandas dataframes from all surfaces
@@ -17,7 +18,7 @@ def merge_gaze_positions(participant_id, video_id, progress, task):
     progress.print('[bold yellow]We are preparing data from each surface.')
 
     for n in range(1, __constants.n_surfaces + 1):
-        dfs[n] = pd.read_csv(surfaces_base_name.format(__constants.input_folder, participant_id, video_id, n))
+        dfs[n] = pd.read_csv(surfaces_base_name.format(__constants.input_folder, participant_id, task_id, n))
         progress.print('Found {} rows in CSV #{}'.format(len(dfs[n]), n))
 
         # Remove onsurf = False, participant did not look in this surface so no usable x and y coordinates to transform.
@@ -115,14 +116,14 @@ def merge_gaze_positions(participant_id, video_id, progress, task):
 
     ## 9a. Correct the offset by finding the first gaze_timestamp from the dummy surface and remove everything 
     # before it from the final dataset.
-    dummy_df = pd.read_csv(dummy_surface_base_name.format(__constants.input_folder, participant_id, video_id))
+    dummy_df = pd.read_csv(dummy_surface_base_name.format(__constants.input_folder, participant_id, task_id))
     first_gaze_timestamp = dummy_df.iloc[0]['gaze_timestamp']
     final_df = final_df[final_df['gaze_timestamp'] >= first_gaze_timestamp]
     progress.print("We are now fetching the first known gaze timestamp from the dummy surfaces, and removing everything before it")
 
     ## 9b. Correct the ending of the dataset, by removing everything after the 
     # last gaze_timestamp from the ijk surface dataframe.
-    synchronization_df = pd.read_csv(synchronization_surface_base_name.format(__constants.input_folder, participant_id, video_id))
+    synchronization_df = pd.read_csv(synchronization_surface_base_name.format(__constants.input_folder, participant_id, task_id))
     last_gaze_timestamp = synchronization_df.iloc[-1]['gaze_timestamp']
     final_df = final_df[final_df['gaze_timestamp'] <= last_gaze_timestamp]
     progress.print("We are now fetching the last known gaze timestamp from the ijk surfaces, and removing everything after it")
@@ -141,7 +142,7 @@ def merge_gaze_positions(participant_id, video_id, progress, task):
 
     # Fetch surface 5 (center)
     center_surface_df = pd.read_csv(surfaces_base_name.format(
-        __constants.input_folder, participant_id, video_id, 5))
+        __constants.input_folder, participant_id, task_id, 5))
     # Everything we add may have an on_screen = False
     center_surface_df['on_screen'] = False
 

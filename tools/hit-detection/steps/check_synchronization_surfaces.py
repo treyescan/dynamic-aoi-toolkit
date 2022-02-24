@@ -1,20 +1,21 @@
-import sys, json
+import sys
 sys.path.append('../../../')
-import __constants
+
+import __constants, json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-def check_synchronization_surfaces(participant_id, video_id, synchronization_file, console):
+def check_synchronization_surfaces(participant_id, task_id, synchronization_file, console):
 
     # Open synchronization surface data file
     synchronization_surface_name = '{}/{}/{}/gaze_positions_on_surface_ijksurface.csv'.format(
-        __constants.input_folder, participant_id, video_id)
+        __constants.input_folder, participant_id, task_id)
     synchronization_surface = pd.read_csv(synchronization_surface_name)
 
     # Open the dummy surface gaze positon data
     dummy_surface_name = '{}/{}/{}/gaze_positions_on_surface_dummysurface.csv'.format(
-        __constants.input_folder, participant_id, video_id)
+        __constants.input_folder, participant_id, task_id)
     dummy_surface = pd.read_csv(dummy_surface_name)
 
     # Correct the timestamps in synchronization_surface
@@ -63,7 +64,7 @@ def check_synchronization_surfaces(participant_id, video_id, synchronization_fil
     # plt.show()
     # sys.exit()
 
-    filename = '../outputs/{}/{}/frames_with_ijksurfaces_found_in_scenes.png'.format(participant_id, video_id)
+    filename = '{}/{}/{}/frames_with_ijksurfaces_found_in_scenes.png'.format(__constants.output_folder, participant_id, task_id)
     plt.savefig(filename)
 
     # regression: ax + b = y

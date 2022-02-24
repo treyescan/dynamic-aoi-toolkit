@@ -11,11 +11,11 @@ This toolkit includes tools to measure dynamic areas of interest (AOI) on a wide
    1. Data structure
    1. AOI Selector
       1. Method 1: Tracking objects semi-automatically
-      1. Method 2: Selection ROI
+      1. Method 2: Selection AOI
       1. Combining the AOI Selector output
    1. AOI Overlay
-      1. Overlaying ROIS and gaze positions over a video
-      1. Overlaying ROIS over a video
+      1. Overlaying AOIS and gaze positions over a video
+      1. Overlaying AOIS over a video
    1. AOI Hit detection
 1. Contribution
 1. License
@@ -101,12 +101,12 @@ python3 aoi_selection.py --video="video.mp4" --start_frame=100 --manual
 
 1. Run the command above, replacing `videos/vid.mp4` with the path to your video
 1. The video will open a preview screen
-1. If you want to select a ROI from the first frame
-1. If not: hint `[enter]` to play the video, hit `[s]` when you want to select a ROI
-1. The video starts playing **without** showing the ROI. when you want to select a new ROI, hit `[s]`
+1. If you want to select a AOI from the first frame
+1. If not: hint `[enter]` to play the video, hit `[s]` when you want to select a AOI
+1. The video starts playing **without** showing the AOI. when you want to select a new AOI, hit `[s]`
 1. When you're done, stop the script by hitting `[q]`
-1. The script will print the selected bounding boxes to the console and calculate the coordinates of the ROI in between
-1. The script will show you the computed ROI's by showing the video again and save it to the output file.
+1. The script will print the selected bounding boxes to the console and calculate the coordinates of the AOI in between
+1. The script will show you the computed AOI's by showing the video again and save it to the output file.
 
 #### Combining the AOI Selector output
 

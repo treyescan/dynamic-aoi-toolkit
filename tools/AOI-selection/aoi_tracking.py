@@ -161,8 +161,8 @@ while ok and frames <= max_frames and may_play:
         trackers = cv2.legacy.MultiTracker_create()
         for i in range(max_obj):
             # select the bounding box of the object we want to track (make
-            # sure you press ENTER or SPACE after selecting the ROI)
-            initBB = cv2.selectROI("Frame", frame, fromCenter=False) 
+            # sure you press ENTER or SPACE after selecting the AOI)
+            initBB = cv2.selectAOI("Frame", frame, fromCenter=False) 
             # create a new object tracker for the bounding box and add it
             # to our multi-object tracker
             if initBB[2] == 0 or initBB[3] == 0: # if no width or height
