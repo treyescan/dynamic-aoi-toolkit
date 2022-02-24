@@ -1,6 +1,6 @@
 # Dynamic AOI Toolkit
 
-This toolkit includes tools to measure widescreen, dynamic, areas of interests (AOI) based on the Pupil Labs Core eye tracker data. The tools built include an (1) AOI selector (both automatic and manual), a tool to (2) overlay AOI's on the stimuli (videos) and (3) AOI hit detection.
+This toolkit includes tools to measure dynamic areas of interest (AOI) on a widescreen based on the Pupil Labs Core eye tracker data. The tools included are: (1) AOI selector (both automatic and manual), (2) overlay AOIs and gaze on the task presented and (3) AOI hit detection.
 
 ## Table of Contents
 
@@ -22,7 +22,7 @@ This toolkit includes tools to measure widescreen, dynamic, areas of interests (
 
 ## Installation
 
-To use the toolkit, make sure python3 is installed. To use the install the latest version of this toolkit, use:
+To use the toolkit, make sure python3 is installed. To install the latest version of this toolkit, use:
 
 ```bash
 git clone git@github.com:treyescan/dynamic-aoi-toolkit.git
@@ -65,7 +65,7 @@ After this, open `__constants.py` and change the variable `data_folder` to point
 
 ### 2. AOI Selector
 
-The goal of the AOI Selector is to translate humanly-identified MUST/MAY be seen hazards to data files. This can be done semi-automatically or manually. Both methods can be used intertwined, after which we can comnine the data files. We can check the data files by overlaying the csv files over a video.
+The AOI Selector allow the user to define dynamic AOIs. This can be done semi-automatically or manually. Both methods can be used intertwined, after which the data files can be combined. We can check the data files by overlaying the csv files over a video in the AOI overlay tool.
 
 #### Method 1: Tracking objects semi-automatically
 
@@ -82,10 +82,10 @@ python3 aoi_tracking.py --video="video.mp4" --start_frame=70
 1. The video starts playing and shows the tracked object. In this state, the results are directly saved to your output csv
 1. When you're done, stop the script by hitting `[q]`
 
-#### Method 2: Selection ROI
+#### Method 2: Selection AOI
 
 ```bash
-# use this to select some frames and let the script interpolate the gaps
+# use this to select  frames and let the script interpolate the frames in between
 python3 aoi_selection.py --video="video.mp4" --start_frame=100
 
 # use this to select each frame manually
@@ -115,9 +115,23 @@ python3 concat_files.py --folder data/testvideo
 
 ### 3. AOI Overlay
 
-> TODO:
+In AOI overlay, 3 tools are presented in order to display selected AOIs and gaze positions. The scripts overlay each frame of the task with information, depending on the chosen tool. Options include: only AOIs, AOIs + gaze of one participant and AOIs + gaze data of all available participants. 
 
-#### Overlaying ROIS and gaze positions over a video
+#### Overlaying AOIS over a video
+
+```bash
+cd tools/overlay/
+python3 overlay_only_aois.py --video="video.mp4" --aois="aois.csv" --start_frame=1000
+```
+
+**Usage**
+
+- Run the command above
+- The video will be outputted to `video_with_labels.mp4` in the same folder
+- Make sure to move this video before creating a new video
+- NB: video processing make take a while since every frame has to be processed at full resolution
+
+#### Overlaying AOIs and gaze positions over a video
 
 ```bash
 # for one participant
@@ -142,23 +156,9 @@ python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.
 1. all gp.csv in {folder of participants} are fetched (last one)
 1. output: video_with_multiple_gp.mp4
 
-#### Overlaying ROIS over a video
-
-```bash
-cd tools/overlay/
-python3 overlay_only_aois.py --video="video.mp4" --aois="aois.csv" --start_frame=1000
-```
-
-**Usage**
-
-- Run the command above
-- The video will be outputted to `video_with_labels.mp4` in the same folder
-- Make sure to move this video before creating a new video
-- NB: video processing make take a while since every frame has to be processed at full resolution
-
 ### 4. AOI Hit detection
 
-> TODO:
+AOI hit detection provides a tool to calculate measures such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors.
 
 ```bash
 python3 analyse.py

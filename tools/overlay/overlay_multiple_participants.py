@@ -10,6 +10,16 @@ from utils.utils__resize_with_aspect_ratio import ResizeWithAspectRatio
 
 # BGR colors
 colors = [
+    #optimized colors for color blindness
+    (0, 0, 0),
+    (0, 159, 230),
+    (233, 180, 86),
+    (115, 158, 0),
+    (66, 228, 240),
+    (178, 114, 0),
+    (0, 94, 213),
+    (167, 121, 204),
+    #color alphabet
     (255, 163, 240),
     (220, 117, 0),
     (242, 241, 94),
@@ -156,7 +166,7 @@ while(cap.isOpened()):
                 p2 = (int(x2), int(y2))
 
                 cv2.rectangle(frame, (p1[0], p1[1] - 40), (p2[0], p1[1]), color, -1, 1)
-                cv2.rectangle(frame, p1, p2, color, 2, 1)
+                cv2.rectangle(frame, p1, p2, color, 4, 1)
 
                 cv2.putText(frame, "{}".format(overlay['Object ID']), (p1[0], p1[1] - 20), 
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA);
@@ -167,7 +177,7 @@ while(cap.isOpened()):
                 new_p1 = (int(new_x1), int(new_y1))
                 new_p2 = (int(new_x2), int(new_y2))
 
-                cv2.rectangle(frame, new_p1, new_p2, color2, 2, 1)
+                cv2.rectangle(frame, new_p1, new_p2, color2, 4, 1)
 
             # Display the resulting frame
             frameToDisplay = ResizeWithAspectRatio(frame, width=FRAME_WIDTH) 
