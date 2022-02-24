@@ -45,6 +45,7 @@ After this, open `__constants.py` and change the variable `data_folder` to point
     - task1_aois.csv
     - ... (more aois)
   - input-gp/
+    - [example-participant](/data/input-gp/example-participant/README.md)
     - P-001/
       - task1/
         - n surfaces from Pupil Labs

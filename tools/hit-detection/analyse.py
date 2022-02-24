@@ -13,7 +13,7 @@ from utils.utils__console import console
 from utils.utils__general import show_error
 
 # all analysis steps
-from steps.check_calibration_surfaces import check_calibration_surfaces
+from steps.check_synchronization_surfaces import check_synchronization_surfaces
 from merge_gaze_positions import merge_gaze_positions
 from apply_median_filter_on_coordinates import apply_median_filter_on_coordinates
 from identify_gaps_in_gaze_positions import identify_gaps_in_gaze_positions
@@ -39,10 +39,10 @@ progress_instance = Progress(
 
 console.print("[bold yellow]Starting analysis for participant \"{}/{}\" at task {}".format(participant_id, video_id, starting_task))
 
-#### 1) Check calibration surfaces on expected moments
-console.print("[cyan]1. Checking calibration surfaces")
+#### 1) Check synchronization surfaces on expected moments
+console.print("[cyan]1. Checking synchronization surfaces")
 if(starting_task == 1):
-    check_calibration_surfaces(participant_id, video_id, '{}.json'.format(video_id), console)
+    check_synchronization_surfaces(participant_id, video_id, '{}.json'.format(video_id), console)
     if(not Confirm.ask("May we continue?")):
         show_error('Aborted by user')
 

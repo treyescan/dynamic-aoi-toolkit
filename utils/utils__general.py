@@ -35,7 +35,7 @@ def check_rois_files(file):
     elif not os.path.isfile('../rois/{}.csv'.format(file)):
         raise Exception('ROIs file for {}.csv not found'.format(file))
     elif not os.path.isfile('../start_end_frames/synchronisation/{}.json'.format(file)):
-        raise Exception('calibration file for {}.json not found'.format(file))
+        raise Exception('synchronization file for {}.json not found'.format(file))
 
 def check_participant_id(id, video_id):
     if id == "":

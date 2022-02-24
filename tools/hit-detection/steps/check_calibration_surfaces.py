@@ -7,38 +7,38 @@ from rich.prompt import Confirm
 sys.path.append('../../../')
 from utils.utils__general import show_error
 
-def check_calibration_surfaces(participant_id, video_id, calibration_file, console):
+def check_synchronization_surfaces(participant_id, video_id, synchronization_file, console):
 
     # Open synchronization surface data file
-    calibration_surface_name = '{}/{}/{}/gaze_positions_on_surface_ijksurface.csv'.format(
+    synchronization_surface_name = '{}/{}/{}/gaze_positions_on_surface_ijksurface.csv'.format(
         __constants.input_folder, participant_id, video_id)
-    calibration_surface = pd.read_csv(calibration_surface_name)
+    synchronization_surface = pd.read_csv(synchronization_surface_name)
 
     # Open the dummy surface
     dummy_surface_name = '{}/{}/{}/gaze_positions_on_surface_dummysurface.csv'.format(
         __constants.input_folder, participant_id, video_id)
     dummy_surface = pd.read_csv(dummy_surface_name)
 
-    # Correct the timestamps in calibration_surface
+    # Correct the timestamps in synchronization_surface
     first_gaze_timestamp = dummy_surface.iloc[0]['gaze_timestamp']
-    calibration_surface['gaze_timestamp'] = calibration_surface['gaze_timestamp'] - first_gaze_timestamp
-    calibration_surface['frame'] = calibration_surface['gaze_timestamp'] * 25
+    synchronization_surface['gaze_timestamp'] = synchronization_surface['gaze_timestamp'] - first_gaze_timestamp
+    synchronization_surface['frame'] = synchronization_surface['gaze_timestamp'] * 25
 
-    # Fetch expected frame numbers of the calibration surfaces
-    input_file_name = '../start_end_frames/synchronisation/{}'.format(calibration_file)
+    # Fetch expected frame numbers of the synchronization surfaces
+    input_file_name = '../start_end_frames/synchronisation/{}'.format(synchronization_file)
 
     # Fetch all entries and exits
     a_file = open(input_file_name, "r")
-    calibration_frames = json.loads(a_file.read())
+    synchronization_frames = json.loads(a_file.read())
     gps_in_scene = []
 
-    for i in range(len(calibration_frames) - 1):
-        # per scene, we want to know how many calibration detections we find
-        current = calibration_frames[i]
-        next = calibration_frames[i+1]
+    for i in range(len(synchronization_frames) - 1):
+        # per scene, we want to know how many synchronization detections we find
+        current = synchronization_frames[i]
+        next = synchronization_frames[i+1]
 
         # find the amount of GP's between frame CURRENT.end and NEXT.start
-        n = len(calibration_surface[(calibration_surface['frame'] > current['end']) & (calibration_surface['frame'] < next['start'])])
+        n = len(synchronization_surface[(synchronization_surface['frame'] > current['end']) & (synchronization_surface['frame'] < next['start'])])
 
         gps_in_scene.append(n)
 
