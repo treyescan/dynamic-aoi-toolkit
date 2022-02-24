@@ -1,8 +1,9 @@
 ## Input folder
-# data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
-data_folder = '/Users/treyescan/development/validatietaak-data-conf0.8' # path validatietaak on yasmin machine
+data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
+# data_folder = '/Users/treyescan/development/validatietaak-data-conf0.8' # path validatietaak on yasmin machine
 
 input_folder = '{}/input-gp'.format(data_folder)
+output_folder = '{}/output'.format(data_folder)
 
 ## Maxmimum coefficient of linear fit on ijkframes_found per scene
 max_coef_lin_fit_ijkframes = 0.3
@@ -41,6 +42,8 @@ total_surface_height = 1200 # in px
 screen_middle_y = 600 # in px
 screen_middle_x = 2880 # in px
 
+## Surface data
+n_surfaces = 9 # number of surfaces
 surfaces = {}
 surfaces[1] = {'left_border': 0, 'right_border': 691 }
 surfaces[2] = {'left_border': 450, 'right_border': 1208 }

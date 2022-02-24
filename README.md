@@ -61,6 +61,10 @@ After this, open `__constants.py` and change the variable `data_folder` to point
       - ... (more task)
     - ... (more participants)
   - videos/
+    - start_end_frames/
+      - synchronization/
+        - task1.json (this file contains start and end frame numbers of all synchronization surfaces)
+        - (more tasks)
     - task1.mp4
     - ... (more videos)
 
@@ -159,7 +163,13 @@ python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.
 
 ### 4. AOI Hit detection
 
+<img src="flowchart.jpeg" />
+
 AOI hit detection provides a tool to calculate measures such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors.
+
+1. Put the data in the appropiate data folder (see Data structure)
+1. Make sure all other files are in place:
+   1. data/videos/synchronization/task.json
 
 ```bash
 cd hit-detection

@@ -1,11 +1,9 @@
-import __constants, sys, json
+import sys, json
+sys.path.append('../../../')
+import __constants
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from rich.prompt import Confirm
-
-sys.path.append('../../../')
-from utils.utils__general import show_error
 
 def check_synchronization_surfaces(participant_id, video_id, synchronization_file, console):
 
@@ -14,7 +12,7 @@ def check_synchronization_surfaces(participant_id, video_id, synchronization_fil
         __constants.input_folder, participant_id, video_id)
     synchronization_surface = pd.read_csv(synchronization_surface_name)
 
-    # Open the dummy surface
+    # Open the dummy surface gaze positon data
     dummy_surface_name = '{}/{}/{}/gaze_positions_on_surface_dummysurface.csv'.format(
         __constants.input_folder, participant_id, video_id)
     dummy_surface = pd.read_csv(dummy_surface_name)
@@ -25,9 +23,9 @@ def check_synchronization_surfaces(participant_id, video_id, synchronization_fil
     synchronization_surface['frame'] = synchronization_surface['gaze_timestamp'] * 25
 
     # Fetch expected frame numbers of the synchronization surfaces
-    input_file_name = '../start_end_frames/synchronisation/{}'.format(synchronization_file)
+    input_file_name = '../../../data/videos/start_end_frames/synchronisation/{}'.format(synchronization_file)
 
-    # Fetch all entries and exits
+    # Fetch all start and end frames of synchronization surfaces
     a_file = open(input_file_name, "r")
     synchronization_frames = json.loads(a_file.read())
     gps_in_scene = []
@@ -65,12 +63,14 @@ def check_synchronization_surfaces(participant_id, video_id, synchronization_fil
     # plt.show()
     # sys.exit()
 
-    plt.savefig('../outputs/{}/{}/frames_with_ijksurfaces_found_in_scenes.png'.format(participant_id, video_id))
+    filename = '../outputs/{}/{}/frames_with_ijksurfaces_found_in_scenes.png'.format(participant_id, video_id)
+    plt.savefig(filename)
 
     # regression: ax + b = y
     a = model[0]
     b = model[1]
 
     console.print('[purple]Found linear regression fit across previous array, with coefficient: {}'.format(a))
+    console.print('[purple]Saved file to {}'.format(filename))
     
     plt.show()

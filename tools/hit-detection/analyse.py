@@ -1,4 +1,4 @@
-import __constants, sys, time
+import sys
 from rich.progress import Progress, TimeElapsedColumn, BarColumn, TimeRemainingColumn
 from rich.prompt import Confirm
 
@@ -14,9 +14,9 @@ from utils.utils__general import show_error
 
 # all analysis steps
 from steps.check_synchronization_surfaces import check_synchronization_surfaces
-from merge_gaze_positions import merge_gaze_positions
-from apply_median_filter_on_coordinates import apply_median_filter_on_coordinates
-from identify_gaps_in_gaze_positions import identify_gaps_in_gaze_positions
+from steps.merge_gaze_positions import merge_gaze_positions
+from steps.apply_median_filter_on_coordinates import apply_median_filter_on_coordinates
+from identify_gaps_and_to_linear_time import identify_gaps_and_to_linear_time
 from identify_hits import identify_hits
 from identify_entries_and_exits import identify_entries_and_exits
 from generate_output import generate_output
@@ -61,7 +61,7 @@ with progress_instance as progress:
 
     #### 4) Identify (valid) gaps in the gaze positions data
     if(we_are_not_skipping_task(4, starting_task, progress, tasks)):
-        identify_gaps_in_gaze_positions(participant_id, video_id, progress, tasks[2])
+        identify_gaps_and_to_linear_time(participant_id, video_id, progress, tasks[2])
 
     #### 5) With the ROIs and the GPs: identify hits in the ROIs
     if(we_are_not_skipping_task(5, starting_task, progress, tasks)):
