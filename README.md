@@ -115,7 +115,7 @@ python3 concat_files.py --folder data/testvideo
 
 ### 3. AOI Overlay
 
-In AOI overlay, 3 tools are presented in order to display selected AOIs and gaze positions. The scripts overlay each frame of the task with information, depending on the chosen tool. Options include: only AOIs, AOIs + gaze of one participant and AOIs + gaze data of all available participants. 
+In AOI overlay, 3 tools are presented in order to display selected AOIs and gaze positions. The scripts overlay each frame of the task with information, depending on the chosen tool. Options include: only AOIs, AOIs + gaze of one participant and AOIs + gaze data of all available participants.
 
 #### Overlaying AOIS over a video
 
@@ -161,7 +161,8 @@ python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.
 AOI hit detection provides a tool to calculate measures such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors.
 
 ```bash
-python3 analyse.py
+cd hit-detection
+python3 analyse.py # this script will ask for all input and display where the output files are saved
 ```
 
 **Usage**
