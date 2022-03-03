@@ -1,6 +1,8 @@
 ## Input folder
-data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
+# data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
 # data_folder = '/Users/treyescan/development/validatietaak-data-conf0.8' # path validatietaak on yasmin machine
+data_folder = '/Users/treyescan/development/dynamic-aoi-toolkit/data'
+
 
 input_folder = '{}/input-gp'.format(data_folder)
 output_folder = '{}/output'.format(data_folder)
@@ -8,15 +10,11 @@ output_folder = '{}/output'.format(data_folder)
 ## Maxmimum coefficient of linear fit on ijkframes_found per scene
 max_coef_lin_fit_ijkframes = 0.3
 
-## Needed for remodnav
-# px2deg = math.degrees(math.atan2(.5 * 155.08161968, 65.06)) / (.5 * 5760)
-px2deg = 0.017361783368346345
-
 ## Sample rate (Hz)
 sample_rate_ET = 240
 
 ## Identifying gaps
-confidence_treshold = 0.7 # %
+confidence_treshold = 0.8 # %
 valid_gap_treshold = 0.075 # s
 add_gap_samples = 0.1 # s (time to "stretch" to valid gaps, both before and after the gap)
 
@@ -28,9 +26,6 @@ z = d = distance_d = distance_to_screen_px = distance_to_screen * ppc # in pixel
 
 angle_a = error_angle = 2.5 # in degrees
 angle_b = minimal_angle_of_aoi = 0 # in degrees
-
-# ## Identifying entries and exits
-# consecutive_0_treshold = 1
 
 # Filter short times between exits and entries
 minimal_treshold_entry_exit = 0.1 # in sec

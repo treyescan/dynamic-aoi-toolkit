@@ -35,9 +35,8 @@ def identify_hits(participant_id, task_id, aois_file, progress, task):
     df_gps_x_aois['frame'] = df_gps['frame']
     df_gps_x_aois['x'] = df_gps['x']
     df_gps_x_aois['y'] = df_gps['y']
-    df_gps_x_aois['y_for_hit_calculation'] = __constants.total_surface_height - df_gps['y']
-
-    # TODO: why did we flip? document it preferably    
+    #0,0 point for original gp data is the left down corner and for aoi data the left up corner
+    df_gps_x_aois['y_for_hit_calculation'] = __constants.total_surface_height - df_gps['y'] 
 
     new_cols = df_aois['Object ID'].unique().reshape(1, -1)[0]
 
@@ -61,7 +60,7 @@ def identify_hits(participant_id, task_id, aois_file, progress, task):
 
         # Fetch AOIS on the same frame as the GP, 
         # if no aois are found, go to the next gaze position
-        aois_to_consider = df_aois[df_aois['frame'] == gp['frame'] - 1]
+        aois_to_consider = df_aois[df_aois['frame'] == gp['frame']]
 
         if(len(aois_to_consider) == 0):
             continue

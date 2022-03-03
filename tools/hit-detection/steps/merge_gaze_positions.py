@@ -173,16 +173,8 @@ def merge_gaze_positions(participant_id, task_id, progress, task):
 
     if new_df['gaze_timestamp'][0] < 0:
         new_df['actual_time'] = new_df['gaze_timestamp'] + abs(new_df.loc[0, 'gaze_timestamp'])
-        # TODO: remove this comment
-        # new_df['frame'] = new_df['actual_time']*25 + 0.00001
     else:
         new_df['actual_time'] = new_df['gaze_timestamp'] - abs(new_df.loc[0, 'gaze_timestamp'])
-        # TODO: remove this comment
-        # new_df['frame'] = new_df['actual_time']*25 + 0.00001 
-
-    # TODO: remove this comment
-    # new_df['frame'] = np.ceil(new_df['frame'])
-    # new_df['frame'] = new_df['frame'].astype(int)
 
     # Write the csv
     progress.print("We will start outputting the dataframe to a csv file. This will take a second.")

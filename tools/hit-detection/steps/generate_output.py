@@ -78,7 +78,7 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
     df['total_dwell_duration'] = 0
     df['amount_entries_exits'] = 0
 
-    # Round time values TODO:
+    # Round time values TODO: alle maten, dus ook ratio dwell, first_entry_time etc. 
     # df = df.round({'first_appearance_time': 2, 'last_appearance_time': 2 })
 
     # First, set up all columns needed for entries and exist (and dwell time)

@@ -57,7 +57,10 @@ After this, open `__constants.py` and change the variable `data_folder` to point
   - output/
     - P-001/
       - task1/
-        > - TODO:
+        - number_of_filtered_rows.txt TODO
+        - gp_x_aoi.csv
+        - entries_exits.json
+        - outputfile.csv    
       - ... (more task)
     - ... (more participants)
   - videos/
@@ -151,7 +154,7 @@ python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --pa
 ```bash
 # for multiple participants
 cd tools/overlay/
-python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --deel="{folder of participants}" --start_frame=800
+python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --task="{folder of participants}" --start_frame=800
 ```
 
 **Usage:**
