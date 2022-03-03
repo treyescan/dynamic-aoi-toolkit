@@ -162,12 +162,11 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
 
     # Save the GP to a file
     gp.to_csv(output_file_name)
-    
-    # TODO: Save how many gaps we set to NaN again
 
     progress.print("Done! We will start outputting the dataframe to a csv file. This will take a second.")
     progress.print('[bold green]We are done! The new csv is outputted to {} and contains {} rows.'.format(output_file_name, len(gp)))
 
+    # TODO: remove this
     sys.exit()
 
 def to_lin_time(progress, original_gp, output_file_name, participant_id, task_id):
@@ -177,7 +176,13 @@ def to_lin_time(progress, original_gp, output_file_name, participant_id, task_id
     #TODO: not necessary step
     
     # create gp df without nans (otherwise we cant interpolate)
-    gp = original_gp[original_gp['true_x_scaled'].notna()] # NB: x and y are the same
+    # gp = original_gp[original_gp['true_x_scaled'].notna()] # NB: x and y are the same
+
+    # TODO: this line below should work, however it doesn't
+    # Which means that in original_gp still some nan values (x and y) are present
+    # we are interpolating those nan values to make sure there arent any left
+    # but apparently this is not done right. Shoud look into this.
+    gp = original_gp
 
     progress.print('First timestamp: {}'.format(first_timestamp))
     progress.print('Last timestamp: {}'.format(last_timestamp))
