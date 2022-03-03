@@ -255,7 +255,7 @@ def playback_aois(file, selected_aois, computed_aois, output_file_name, start_fr
             cv2.putText(frame, "Computed BB for frame {}: {} (coordinates are scaled to video)".format(frames, aoiBB), (30, 70), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1, cv2.LINE_AA);
 
-        cv2.rectangle(frame, p1, p2, color, 2, 1)
+        cv2.rectangle(frame, p1, p2, color, 5, 1)
 
         # Show the output file location
         cv2.putText(frame, "Results already saved to {}. Hit [q] to exit.".format(output_file_name), (30, 30), 

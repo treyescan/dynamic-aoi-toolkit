@@ -76,7 +76,7 @@ while(cap.isOpened()):
                     color = (255, 0, 0)
 
                 cv2.rectangle(frame, (p1[0], p1[1] - 40), (p2[0], p1[1]), color, -1, 1)
-                cv2.rectangle(frame, p1, p2, color, 2, 1)
+                cv2.rectangle(frame, p1, p2, color, 5, 1)
 
                 cv2.putText(frame, "{}".format(overlay['Object ID']), (p1[0], p1[1] - 20), 
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA);
