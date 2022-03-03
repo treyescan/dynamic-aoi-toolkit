@@ -24,7 +24,7 @@ def ask_for_participant_id():
     return id
 
 def ask_for_task_id():
-    file = console.input("Provide the [bold cyan]task ID (e.g. Deel 1)[/bold cyan] (for input folder and both AOI & synchronization file) [i bright_black](default: Deel1)[/i bright_black]: ") or "Deel1"
+    file = console.input("Provide the [bold cyan]task ID (e.g. task1)[/bold cyan] (for input folder and both AOI & synchronization file) [i bright_black](default: task1)[/i bright_black]: ") or "task1"
     check_aois_files(file)
     return file
 

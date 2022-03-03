@@ -33,6 +33,7 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
         'first_appearance_time',
         'last_appearance_time',
         'total_appearance_duration',
+        'is_hit',
         'first_entry_time',
         'time_to_first_entry',
         'amount_entries_exits',
@@ -77,9 +78,7 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
     df['total_diversion_duration'] = 0
     df['total_dwell_duration'] = 0
     df['amount_entries_exits'] = 0
-
-    # Round time values TODO: alle maten, dus ook ratio dwell, first_entry_time etc. 
-    # df = df.round({'first_appearance_time': 2, 'last_appearance_time': 2 })
+    df['is_hit'] = 0
 
     # First, set up all columns needed for entries and exist (and dwell time)
     longest_key = None
@@ -201,30 +200,32 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
         df.iloc[index, df.columns.get_loc('amount_entries_exits')] = amount_entries_exits_for_row
         progress.print("row {} has {} entries & exits".format(row['object_id'], amount_entries_exits_for_row))
 
-    # Add empty columns
+    # Fill column
     df['total_diversion_duration'] = df['total_appearance_duration'] - df['total_dwell_duration']
 
-    # Add tresholds to output
-    df_w = df.append({
-        'object_id': 'minimal_treshold_entry_exit = {}'.format(__constants.minimal_treshold_entry_exit),
-        'first_appearance_time': 'minimal_treshold_dwell = {}'.format(__constants.minimal_treshold_dwell),
-        'last_appearance_time': 'minimal_angle_of_aoi = {}'.format(__constants.minimal_angle_of_aoi),
-        'total_appearance_duration': 'confidence_treshold = {}'.format(__constants.confidence_treshold),       
-        'total_dwell_duration': 'error_angle = {}'.format(__constants.angle_a),
-        'ratio_dwell_duration_total_appereance': 'minimal_angle_of_aoi = {}'.format(__constants.angle_b)       
-
-        # placeholders:
-        # 'total_diversion_duration': 'foobar = {}'.format(__constants.foobar)
-
-    }, ignore_index=True)
+    # Compute is hit or not
+    df['is_hit'] = df['total_dwell_duration'] > 0
+    df['is_hit'] = df['is_hit'].astype(int)
 
     progress.advance(task)
 
     # Write to csv
     d = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-    output_file_name = '{}/{}/{}/{}_output_{}.csv'.format(
+    output_file_name = '{}/{}/{}/{}_output_{}'.format(
         __constants.output_folder, participant_id, task_id, participant_id, d)
-    df_w.to_csv(output_file_name)
+
+    df.to_csv('{}.csv'.format(output_file_name), float_format='%.2f')
+
+    # Save the constants/tresholds used to a file with similar 
+    # name so we can trace our assumptions later
+    text_file = '{}.txt'.format(output_file_name)
+    with open(text_file,"w+") as f:
+        f.write('minimal_treshold_entry_exit = {} \n'.format(__constants.minimal_treshold_entry_exit)),
+        f.write('minimal_treshold_dwell = {} \n'.format(__constants.minimal_treshold_dwell)),
+        f.write('minimal_angle_of_aoi = {} \n'.format(__constants.minimal_angle_of_aoi)),
+        f.write('confidence_treshold = {} \n'.format(__constants.confidence_treshold)),
+        f.write('error_angle = {} \n'.format(__constants.angle_a)),
+        f.write('minimal_angle_of_aoi = {} \n'.format(__constants.angle_b)),
 
     progress.print("[green bold]Saved output to {}".format(output_file_name))
 

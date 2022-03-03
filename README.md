@@ -57,10 +57,10 @@ After this, open `__constants.py` and change the variable `data_folder` to point
   - output/
     - P-001/
       - task1/
-        - number_of_filtered_rows.txt TODO
+        - number_of_filtered_rows.txt TODO:
         - gp_x_aoi.csv
         - entries_exits.json
-        - outputfile.csv    
+        - outputfile.csv
       - ... (more task)
     - ... (more participants)
   - videos/

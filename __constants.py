@@ -1,7 +1,7 @@
 ## Input folder
-# data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
+data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
 # data_folder = '/Users/treyescan/development/validatietaak-data-conf0.8' # path validatietaak on yasmin machine
-data_folder = '/Users/treyescan/development/dynamic-aoi-toolkit/data'
+# data_folder = '/Users/treyescan/development/dynamic-aoi-toolkit/data'
 
 
 input_folder = '{}/input-gp'.format(data_folder)
