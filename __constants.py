@@ -4,8 +4,8 @@ data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
 # data_folder = '/Users/treyescan/development/dynamic-aoi-toolkit/data'
 
 
-# input_folder = '{}/input-gp'.format(data_folder)
-input_folder = '/Users/treyescan/development/validatietaak-data-conf0.8'.format(data_folder)
+input_folder = '{}/input-gp'.format(data_folder)
+# input_folder = '/Users/treyescan/development/validatietaak-data-conf0.8'.format(data_folder)
 output_folder = '{}/output'.format(data_folder)
 
 ## Maximimum coefficient of linear fit on ijkframes_found per scene

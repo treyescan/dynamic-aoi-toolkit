@@ -33,7 +33,7 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
 
     # Save the size of the original data set
     with open(text_file,"w+") as f:
-        f.write('Total amount of rows: {} \n'.format(total_count))
+        f.write('Total amount of rows: {} \n\n'.format(total_count))
     
     # Save how many rows will be changed to NaN to a text file
     removed_NaN_count = df[df['confidence'] < __constants.confidence_treshold].shape[0]
@@ -65,7 +65,7 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
     NaN_count = df[df['true_x_scaled'].isnull()].shape[0]
     with open(text_file,"a+") as f:
         percentage = round(NaN_count/total_count*100, 2)
-        f.write('Set position to NaN of {} rows in total ({}% of the original dataset) \n'.format(
+        f.write('Set position to NaN of {} rows in total ({}% of the original dataset) \n\n'.format(
             NaN_count, percentage))
  
     progress.advance(task)
@@ -75,9 +75,7 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
     currentlyAtGap = False
     currentGapStartedAtIndex = np.NaN
     durationOfCurrentGap = 0
-    interpolatedRows = 0
     gap_timestamps_to_save = []
-    interpolatedGaps = 0
 
     for index, gp in df.iterrows():
         if(index % 2000 == 0 or index == 0):
@@ -96,15 +94,22 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
             durationOfCurrentGap = durationOfCurrentGap + durationOfCurrentGazeP
 
         # Close and interpolate gap
-        if(not np.isnan(gp['true_x_scaled']) and not np.isnan(gp['true_y_scaled']) and currentlyAtGap):
+        if(
+            (
+                # if we find a row which has a x AND y again
+                (not np.isnan(gp['true_x_scaled']) and not np.isnan(gp['true_y_scaled'])) 
+                or
+                # if we are at the last row
+                currentlyAtLastGazeP
+            )
+            # and we are currenly keeping track of a gap
+            and currentlyAtGap
+        ):
+            # THEN: close and interpolate the gap
+
             # For debugging purposes
             # progress.print('Closed a gap at index: {}, with duration: {}s'.format(index, durationOfCurrentGap))
             # progress.print('Should we interpolate between index {} and index {}?'.format(currentGapStartedAtIndex, index))
-
-            # Increment interpolated rows
-            # interpolatedRows = interpolatedRows + index - (currentGapStartedAtIndex - 1)
-            interpolatedGaps = interpolatedGaps + 1
-            interpolatedRows = interpolatedRows + (index - 1) - currentGapStartedAtIndex
 
             # Save the gap start and end time
             if(durationOfCurrentGap > __constants.valid_gap_treshold):
@@ -146,19 +151,38 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
     a_file = open(gap_timestamps_file, "r")
     gap_timestamps = json.loads(a_file.read())
 
+    gp_for_calculating_interpolated_rows = gp.copy()
+
     for timestamp in gap_timestamps:
+        gp_for_calculating_interpolated_rows.loc[(gp_for_calculating_interpolated_rows['t'] > timestamp[0]) & \
+            (gp_for_calculating_interpolated_rows['t'] < timestamp[1]), 'x'] = np.NaN
+        gp_for_calculating_interpolated_rows.loc[(gp_for_calculating_interpolated_rows['t'] > timestamp[0]) & \
+            (gp_for_calculating_interpolated_rows['t'] < timestamp[1]), 'y'] = np.NaN
+
         gp.loc[(gp['t'] > timestamp[0] - __constants.add_gap_samples) & \
              (gp['t'] < timestamp[1] + __constants.add_gap_samples), 'x'] = np.NaN
         gp.loc[(gp['t'] > timestamp[0] - __constants.add_gap_samples) & \
              (gp['t'] < timestamp[1] + __constants.add_gap_samples), 'y'] = np.NaN
 
+    # the amount of rows left interpolated < valid_gap_treshold
+    # count how many rows we interpolated in total, and subtract the amount of rows in gaps > valid_gap_treshold
 
-    # Count NaN rows and save to file
-    NaN_count = gp[gp['x'].isnull()].shape[0]
+    rows_to_NaN_without_extended_gap = gp_for_calculating_interpolated_rows[gp_for_calculating_interpolated_rows['x'].isnull()].shape[0]
+    interpolated_rows_count = NaN_count - rows_to_NaN_without_extended_gap
+
+    # Save some stats to the number_of_filtered_rows.txt
+    NaN_count_with_extended_gaps = gp[gp['x'].isnull()].shape[0]
     with open(text_file,"a+") as f:
-        percentage = round(NaN_count/total_count*100, 2)
-        f.write('After interpolation to linear time, set position of {} rows ({}% of the original dataset) to NaN again (after extending the gaps) \n'
-        .format(NaN_count, percentage))
+
+        f.write('After interpolation to linear time, set position of {} rows set to NaN\n'
+            .format(rows_to_NaN_without_extended_gap))
+
+        f.write('{} interpolated rows are left in the dataset (these where < treshold of {} seconds)\n'
+            .format(interpolated_rows_count, __constants.valid_gap_treshold))
+
+        percentage = round(NaN_count_with_extended_gaps/total_count*100, 2)
+        f.write('Set position of {} rows ({}% of the original dataset) to NaN (after extending the gaps)\n'
+            .format(NaN_count_with_extended_gaps, percentage))
 
     # Save the GP to a file
     gp.to_csv(output_file_name)
@@ -166,23 +190,9 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
     progress.print("Done! We will start outputting the dataframe to a csv file. This will take a second.")
     progress.print('[bold green]We are done! The new csv is outputted to {} and contains {} rows.'.format(output_file_name, len(gp)))
 
-    # TODO: remove this
-    sys.exit()
-
-def to_lin_time(progress, original_gp, output_file_name, participant_id, task_id):
-    first_timestamp = original_gp.actual_time.iloc[0]  
-    last_timestamp = original_gp.actual_time.iloc[-1] 
-    
-    #TODO: not necessary step
-    
-    # create gp df without nans (otherwise we cant interpolate)
-    # gp = original_gp[original_gp['true_x_scaled'].notna()] # NB: x and y are the same
-
-    # TODO: this line below should work, however it doesn't
-    # Which means that in original_gp still some nan values (x and y) are present
-    # we are interpolating those nan values to make sure there arent any left
-    # but apparently this is not done right. Shoud look into this.
-    gp = original_gp
+def to_lin_time(progress, gp, output_file_name, participant_id, task_id):
+    first_timestamp = gp.actual_time.iloc[0]  
+    last_timestamp = gp.actual_time.iloc[-1] 
 
     progress.print('First timestamp: {}'.format(first_timestamp))
     progress.print('Last timestamp: {}'.format(last_timestamp))
