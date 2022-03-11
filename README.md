@@ -84,7 +84,8 @@ The AOI Selector allow the user to define dynamic AOIs. This can be done semi-au
 python3 aoi_tracking.py --video="video.mp4" --start_frame=70
 ```
 
-***Usage:***
+**_Usage:_**
+
 1. Run the command above, replacing `vid.mp4` with the path to your video
 1. The video will open a preview screen
 1. If you want to select an object to track from the first frame, draw a box on the video
@@ -102,7 +103,8 @@ python3 aoi_selection.py --video="video.mp4" --start_frame=100
 python3 aoi_selection.py --video="video.mp4" --start_frame=100 --manual
 ```
 
-***Usage:***
+**_Usage:_**
+
 1. Run the command above, replacing `videos/vid.mp4` with the path to your video
 1. The video will open a preview screen
 1. If you want to select a AOI from the first frame
@@ -118,7 +120,8 @@ python3 aoi_selection.py --video="video.mp4" --start_frame=100 --manual
 python3 concat_files.py --folder data/testvideo
 ```
 
-***Usage:***
+**_Usage:_**
+
 1. Make sure all output files from script 1 and 2 are saved in one folder
 1. Run the command above, replacing data/testvideo` with the path to your output folder
 1. The files will be concatenated to a single file (`combined_data/dataset.csv`). The console will show you the path of this file
@@ -134,7 +137,8 @@ cd tools/overlay/
 python3 overlay_only_aois.py --video="video.mp4" --aois="aois.csv" --start_frame=1000
 ```
 
-***Usage:***
+**_Usage:_**
+
 1. Run the command above
 1. The video will be outputted to `video_with_labels.mp4` in the same folder
 1. Make sure to move this video before creating a new video
@@ -148,7 +152,8 @@ cd tools/overlay/
 python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --participant="{folder to particpant}" --start_frame=800
 ```
 
-***Usage:***
+**_Usage:_**
+
 1. Run the command above
 1. The video will be outputted to `video_with_labels_and_gaze.mp4` in the same folder
 1. Make sure to move this video before creating a new video
@@ -162,23 +167,25 @@ cd tools/overlay/
 python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --task="{folder of participants}" --start_frame=800
 ```
 
-***Usage:***
+**_Usage:_**
+
 1. all gp.csv in {folder of participants} are fetched (last one)
 1. output: video_with_multiple_gp.mp4
    1. NB: video processing make take a while since every frame has to be processed at full resolution
 
 ### 4. AOI Hit detection
 
-<img src="flowchart.jpeg" />
+<img src="flowchart.png" />
 
-AOI hit detection provides a tool to calculate measures such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With merge_outputs.py the lastly generated output file of each participant is merged into one output file for statistical analysis purposes. 
+AOI hit detection provides a tool to calculate measures such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With merge_outputs.py the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
 
 ```bash
 cd hit-detection
 python3 analyse.py # this script will ask for all input and display where the output files are saved
 ```
 
-***Usage:***
+**_Usage:_**
+
 1. Put the data in the appropiate data folder (see Data structure)
 1. Make sure all other files are in place:
    1. data/videos/synchronization/task.json
@@ -187,12 +194,12 @@ python3 analyse.py # this script will ask for all input and display where the ou
 
 ```bash
 cd hit-detection
-python3 merge_outputs.py 
+python3 merge_outputs.py
 ```
 
-***Usage:***
-1. Make sure each participant folder has the file to be merged, as the newest output file in the folder. 
+**_Usage:_**
 
+1. Make sure each participant folder has the file to be merged, as the newest output file in the folder.
 
 ## 3. Contribution
 
