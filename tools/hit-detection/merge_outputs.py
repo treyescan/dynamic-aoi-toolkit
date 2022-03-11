@@ -5,14 +5,15 @@ import __constants, glob, os, platform, subprocess
 import pandas as pd
 
 output_files = '*.csv'
-participant_folders = glob.glob("{}/*/".format(__constants.output_folder))
+participant_folders = glob.glob("{}/*".format(__constants.output_folder))
 
 dfs = []
 
 for participant in participant_folders:
-    folder = "{}{}/Deel3/*.csv".format(__constants.output_folder, participant)
+    folder = "{}/val/*.csv".format(participant)
     list_of_files = glob.glob(folder) # * means all if need specific format then *.csv
     print(folder)
+    print(list_of_files)
 
     latest_file = max(list_of_files, key=os.path.getctime)
     print('added {}'.format(latest_file))
