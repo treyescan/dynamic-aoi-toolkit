@@ -1,6 +1,5 @@
 import argparse, cv2, sys, math
 import pandas as pd
-import numpy as np
 
 sys.path.append('../../')
 import __constants

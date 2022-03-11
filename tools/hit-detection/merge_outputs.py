@@ -12,8 +12,6 @@ dfs = []
 for participant in participant_folders:
     folder = "{}/val/*.csv".format(participant)
     list_of_files = glob.glob(folder) # * means all if need specific format then *.csv
-    print(folder)
-    print(list_of_files)
 
     latest_file = max(list_of_files, key=os.path.getctime)
     print('added {}'.format(latest_file))

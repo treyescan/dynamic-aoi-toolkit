@@ -1,6 +1,5 @@
 import argparse, cv2, sys, math, glob
 import pandas as pd
-import numpy as np
 
 sys.path.append('../../')
 import __constants
@@ -10,15 +9,6 @@ from utils.utils__resize_with_aspect_ratio import ResizeWithAspectRatio
 
 # BGR colors
 colors = [
-    #optimized colors for color blindness
-    (0, 0, 0),
-    (0, 159, 230),
-    (233, 180, 86),
-    (115, 158, 0),
-    (66, 228, 240),
-    (178, 114, 0),
-    (0, 94, 213),
-    (167, 121, 204),
     #color alphabet
     (255, 163, 240),
     (220, 117, 0),
