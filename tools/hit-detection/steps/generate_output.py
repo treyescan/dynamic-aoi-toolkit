@@ -3,7 +3,7 @@ sys.path.append('../../../')
 
 import __constants, os.path, subprocess, json, math, platform, re
 import pandas as pd
-import numpy as np
+from io import StringIO
 from datetime import datetime
 from utils.utils__general import show_error
 from utils.utils__aois import prepare_aois_df
@@ -147,8 +147,7 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
                         df.at[index, 'dwell_time({})'.format(n)] = None
 
                         # After removing a short interval between exit(n-1) and entry(n):
-                        # Squeeze the empty fields and reset the counter
-                        df = df.apply(squeeze_nan, axis=1)
+                        # Reset the counter
                         i = 0
         i = i + 1
 
@@ -194,7 +193,7 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
             if 'dwell_time({})'.format(i + 1) in df:
                 value_of_dwell_for_row = df.iloc[index, df.columns.get_loc('dwell_time({})'.format(i + 1))]
 
-                if(not math.isnan(value_of_dwell_for_row)):
+                if(value_of_dwell_for_row != None and not math.isnan(value_of_dwell_for_row)):
                     amount_entries_exits_for_row = amount_entries_exits_for_row + 1
 
         df.iloc[index, df.columns.get_loc('amount_entries_exits')] = amount_entries_exits_for_row
@@ -213,6 +212,12 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
     d = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
     output_file_name = '{}/{}/{}/{}_output_{}'.format(
         __constants.output_folder, participant_id, task_id, participant_id, d)
+    
+    # Remove empty cells
+    df = pd.read_csv(StringIO(re.sub(',+',',',df.to_csv())))
+
+    # Drop empty columns 
+    df = df.dropna(axis='columns', how='all')
 
     df.to_csv('{}.csv'.format(output_file_name), float_format='%.2f')
 
@@ -227,16 +232,9 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
         f.write('error_angle = {} \n'.format(__constants.angle_a)),
         f.write('minimal_angle_of_aoi = {} \n'.format(__constants.angle_b)),
 
-    progress.print("[green bold]Saved output to {}".format(output_file_name))
+    progress.print("[green bold]Saved output to {}.csv".format(output_file_name))
 
     if not platform.system() == 'Windows':
-        subprocess.call(['open', output_file_name])
+        subprocess.call(['open', "{}.csv".format(output_file_name)])
     
     progress.advance(task)
-
-# We are left with some NaN values, let's squeeze the rows
-def squeeze_nan(x):
-    original_columns = x.index.tolist()
-    squeezed = x.dropna()
-    squeezed.index = [original_columns[n] for n in range(squeezed.count())]
-    return squeezed.reindex(original_columns, fill_value=np.nan)
