@@ -20,6 +20,7 @@ This toolkit includes tools to measure dynamic areas of interest (AOI) on a wide
    1. AOI Hit detection
       1. Analyse metrics such as dwell time, time to first entry etc.
       1. Merge outputs
+   1. Apriltags overlay on video
 1. Contribution
 1. License
 
@@ -200,6 +201,23 @@ python3 merge_outputs.py
 **_Usage:_**
 
 1. Make sure each participant folder has the file to be merged, as the newest output file in the folder.
+
+### 5. Apriltags overlay on video
+
+The goal of this part of the HPT toolset is to burn QR codes to a video so it can be used in the trials.
+
+TODO: See script for usable params
+
+#### Burn QR codes
+
+```bash
+python3 burn_qrs.py --name="../videos/vid.mp4" --cols=8 --rows=4 --default-scale=2
+python3 burn_qrs.py --name="../videos/vid.mp4" --cols=8 --rows=4 --default-scale=2 --large-scale=4 --large-scale-indeces=16,18,17,19
+```
+
+**Usage:**
+
+- In `/output` it will output the video with burned QR codes and it will provide a png with the QR codes
 
 ## 3. Contribution
 
