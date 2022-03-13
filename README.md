@@ -174,7 +174,7 @@ python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.
 
 ### 4. AOI Hit detection
 
-<center><img src="flowchart.png" style="max-width: 300px" /></center>
+<img src="flowchart.png" style="width: 300px" />
 
 AOI hit detection provides a tool to calculate measures such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With merge_outputs.py the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
 
