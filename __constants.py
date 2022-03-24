@@ -25,8 +25,8 @@ ppi = 94.34 # px per inch
 ppc = ppi/2.54 # px per cm 37,141732283
 z = d = distance_d = distance_to_screen_px = distance_to_screen * ppc # in pixels
 
-angle_a = error_angle = 2.5 # in degrees
-angle_b = minimal_angle_of_aoi = 2.5 # in degrees
+angle_a = error_angle = 1.5 # in degrees
+angle_b = minimal_angle_of_aoi = 1.5 # in degrees
 
 # Filter short times between exits and entries
 minimal_treshold_entry_exit = 0.1 # in sec

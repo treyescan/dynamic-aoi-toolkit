@@ -22,7 +22,7 @@ for participant in participant_folders:
 big_frame = pd.concat(dfs, ignore_index=True)
 big_frame = big_frame.drop(columns=['Unnamed: 0', 'index'])
 
-output_file_name = '{}merged_outputs.csv'.format(__constants.output_folder)
+output_file_name = '{}/merged_outputs.csv'.format(__constants.output_folder)
 big_frame.to_csv(output_file_name)
 
 if not platform.system() == 'Windows':
