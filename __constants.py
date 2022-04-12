@@ -18,8 +18,8 @@ sample_rate_ET = 240
 frame_rate = 25
 
 ## Identifying gaps
-confidence_treshold = 0.8 # %
-valid_gap_treshold = 0.075 # s
+confidence_threshold = 0.8 # %
+valid_gap_threshold = 0.075 # s
 add_gap_samples = 0.1 # s (time to "stretch" to valid gaps, both before and after the gap)
 
 ## Calculating AOI hits
@@ -32,8 +32,8 @@ angle_a = error_angle = 1.5 # in degrees
 angle_b = minimal_angle_of_aoi = 1.5 # in degrees
 
 # Filter short times between exits and entries
-minimal_treshold_entry_exit = 0.1 # in sec
-minimal_treshold_dwell = 0.1 # in sec
+minimal_threshold_entry_exit = 0.1 # in sec
+minimal_threshold_dwell = 0.1 # in sec
 
 ## Surfaces & screen
 total_surface_width = 5760 # in px

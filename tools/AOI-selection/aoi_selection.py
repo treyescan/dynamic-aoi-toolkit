@@ -58,30 +58,6 @@ def main():
         print('invalid input')
         sys.exit()
 
-    # How many CBR MUST 
-    CBR_MUST = input('How many CBR MUST ? ')
-    if(CBR_MUST == ''):    
-        print('invalid input')
-        sys.exit()
-
-    # How many CBR MAY
-    CBR_MAY = input('How many CBR MAY? ')
-    if(CBR_MAY == ''): 
-        print('invalid input')
-        sys.exit()
-
-    # How many drivers MUST 
-    drivers_MUST = input('How many drivers MUST ? ')
-    if(drivers_MUST == ''):    
-        print('invalid input')
-        sys.exit()
-
-    # How many drivers MAY
-    drivers_MAY = input('How many drivers MAY? ')
-    if(drivers_MAY == ''): 
-        print('invalid input')
-        sys.exit()
-
     # Prepare output file name, we'll show it multiple times for convenience
     output_file_name = generate_file_name(given_label)
 
@@ -97,7 +73,7 @@ def main():
     computed_aois = compute_transition_aois(selected_aois)
 
     # Save the computed aois to a csv
-    save_to_csv(output_file_name, computed_aois, start_frame, must_or_may, CBR_MUST, CBR_MAY, drivers_MUST, drivers_MAY, category)
+    save_to_csv(output_file_name, computed_aois, start_frame, must_or_may, category)
 
     # Playback the aois for a visual check
     playback_aois(video_name, selected_aois, computed_aois, output_file_name, start_frame)
@@ -299,13 +275,13 @@ def generate_file_name(given_label):
     return 'output/' + unique_label + '.csv'
 
 # Save the csv
-def save_to_csv(output_file_name, computed_aois, start_frame, must_or_may, CBR_MUST, CBR_MAY, drivers_MUST, drivers_MAY, category):
+def save_to_csv(output_file_name, computed_aois, start_frame, must_or_may, category):
     label = output_file_name.replace('output/', '').replace('.csv', '')
     csv_file = output_file_name
 
     with open(csv_file, 'w', newline='') as write_obj:
         csv_writer = writer(write_obj)
-        csv_writer.writerow(['Frame','Object ID', 'category', 'x1','x2','y1','y2', 'type', 'CBR_MUST', 'CBR_MAY', 'drivers_MUST', 'drivers_MAY'])
+        csv_writer.writerow(['Frame','Object ID', 'category', 'x1','x2','y1','y2', 'type'])
 
         for fnr in computed_aois:
             aoi = computed_aois[fnr]
@@ -319,8 +295,7 @@ def save_to_csv(output_file_name, computed_aois, start_frame, must_or_may, CBR_M
             csv_writer.writerow([
                 (fnr + start_frame), 
                 label, category, x1, x2, y1, y2,
-                ('must' if must_or_may == 1 else 'may'),
-                CBR_MUST, CBR_MAY, drivers_MUST, drivers_MAY
+                ('must' if must_or_may == 1 else 'may')
             ])
     
     print('\033[0;32m' + '----------------------------')

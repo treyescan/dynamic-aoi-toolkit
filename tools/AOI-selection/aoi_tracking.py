@@ -50,30 +50,6 @@ if(must_or_may != 1 and must_or_may != 2):
     print('invalid input')
     sys.exit()
 
-# How many CBR MUST 
-CBR_MUST = input('How many CBR MUST ? ')
-if(CBR_MUST == ''):    
-    print('invalid input')
-    sys.exit()
-
-# How many CBR MAY
-CBR_MAY = input('How many CBR MAY? ')
-if(CBR_MAY == ''): 
-    print('invalid input')
-    sys.exit()
-
-# How many drivers MUST 
-drivers_MUST = input('How many drivers MUST ? ')
-if(drivers_MUST == ''):    
-    print('invalid input')
-    sys.exit()
-
-# How many drivers MAY
-drivers_MAY = input('How many drivers MAY? ')
-if(drivers_MAY == ''): 
-    print('invalid input')
-    sys.exit()
-
 # generate correct file identifier
 
 # step 1: check if files with same label already exist in output/
@@ -107,7 +83,7 @@ video = cv2.VideoCapture(args.video) # Read video
 csv_file = output_file_name
 with open(csv_file, 'w', newline='') as write_obj:
     csv_writer = writer(write_obj)
-    csv_writer.writerow(['Frame','Object ID', 'category', 'x1','x2','y1','y2', 'type', 'CBR_MUST', 'CBR_MAY', 'drivers_MUST', 'drivers_MAY'])
+    csv_writer.writerow(['Frame','Object ID', 'category', 'x1','x2','y1','y2', 'type'])
 
 print('\033[0;32m' + '----------------------------')
 print('saving results to ' + output_file_name)
@@ -205,8 +181,7 @@ while ok and frames <= max_frames and may_play:
                         csv_writer.writerow([                   
                             (frames + start_frame),         
                             unique_label, category,
-                            x1, x2, y1, y2, ('must' if must_or_may == 1 else 'may'),
-                            CBR_MUST, CBR_MAY, drivers_MUST, drivers_MAY
+                            x1, x2, y1, y2, ('must' if must_or_may == 1 else 'may')
                         ])
 
         else:

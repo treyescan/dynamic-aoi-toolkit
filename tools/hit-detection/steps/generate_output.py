@@ -135,7 +135,7 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
                 if 'entry({})'.format(n) in df and 'exit({})'.format(n-1) in df and 'exit({})'.format(n-1) in df and row['entry({})'.format(n)] != None and row['exit({})'.format(n-1)] != None:
                     dur = row['entry({})'.format(n)] - row['exit({})'.format(n-1)]
                     
-                    if(dur < __constants.minimal_treshold_entry_exit):
+                    if(dur < __constants.minimal_threshold_entry_exit):
                         progress.print('found a duration of {} so we\'re merging this entry&exit pair with the previous one'.format(dur))
 
                         # replace the exit(n-1) with the exit(n)
@@ -159,7 +159,7 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
         n = i + 1
         if n > 1:
             for index, row in df.iterrows():
-                if row['dwell_time({})'.format(n)] != None and row['dwell_time({})'.format(n)] < __constants.minimal_treshold_dwell:
+                if row['dwell_time({})'.format(n)] != None and row['dwell_time({})'.format(n)] < __constants.minimal_threshold_dwell:
                     df.at[index, 'entry({})'.format(n)] = None
                     df.at[index, 'exit({})'.format(n)] = None
                     df.at[index, 'dwell_time({})'.format(n)] = None
@@ -221,14 +221,14 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
 
     df.to_csv('{}.csv'.format(output_file_name), float_format='%.2f')
 
-    # Save the constants/tresholds used to a file with similar 
+    # Save the constants/thresholds used to a file with similar 
     # name so we can trace our assumptions later
     text_file = '{}.txt'.format(output_file_name)
     with open(text_file,"w+") as f:
-        f.write('minimal_treshold_entry_exit = {} \n'.format(__constants.minimal_treshold_entry_exit)),
-        f.write('minimal_treshold_dwell = {} \n'.format(__constants.minimal_treshold_dwell)),
+        f.write('minimal_threshold_entry_exit = {} \n'.format(__constants.minimal_threshold_entry_exit)),
+        f.write('minimal_threshold_dwell = {} \n'.format(__constants.minimal_threshold_dwell)),
         f.write('minimal_angle_of_aoi = {} \n'.format(__constants.minimal_angle_of_aoi)),
-        f.write('confidence_treshold = {} \n'.format(__constants.confidence_treshold)),
+        f.write('confidence_threshold = {} \n'.format(__constants.confidence_threshold)),
         f.write('error_angle = {} \n'.format(__constants.angle_a)),
         f.write('minimal_angle_of_aoi = {} \n'.format(__constants.angle_b)),
 

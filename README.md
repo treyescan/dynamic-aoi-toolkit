@@ -5,8 +5,9 @@ This toolkit includes tools to measure dynamic areas of interest (AOI) on a wide
 ## Table of Contents
 
 1. [Installation](#installation)
+1. [Task Preparation](#task-preparation)
 1. [Usage](#usage)
-   1. [Data structure](#1-data-structure-data-folder)
+   1. [Data Structure](#1-data-structure-data-folder)
    1. [AOI Selector](#2-aoi-selector)
       1. Method 1: Tracking objects semi-automatically
       1. Method 2: Selection AOI
@@ -16,7 +17,7 @@ This toolkit includes tools to measure dynamic areas of interest (AOI) on a wide
       1. Overlaying AOIS and gaze positions over a video
       1. Overlaying gaze positions of multiple participants and AOIs over a video
    1. [AOI Hit detection](#4-aoi-hit-detection)
-      1. Analyse metrics such as dwell time, time to first entry etc.
+      1. Analyze metrics such as dwell time, time to first entry etc.
       1. Merge outputs
    1. [Apriltags overlay on video](#5-apriltags-overlay-on-video)
 1. [Contribution](#3-contribution)
@@ -32,11 +33,18 @@ git clone git@github.com:treyescan/dynamic-aoi-toolkit.git
 pip3 install -m requirements.txt
 ```
 
-After this, open `__constants.py` and change the variable `data_folder` to point to the data folder as structured below.
+## Task Preparation
+
+In order to use this toolkit, a task video must be prepared. Videos can be shot in any video dimensions, resolution and frame rate. Just make sure to change the values for total_surface_width, total_surface_height and frame_rate in [__constants.py](/__constants.py).
+When editing the task video, make sure to put apriltags on the borders of the video. border_apriltags.py can be used for this purpose (5. Apriltags overlay on video). Make sure that the appearance of these apriltags marks the beginning of the task as the dummy surface in Pupil Labs Capture. 
+Surfaces should also be defined in Pupil Labs Capture. The number of surfaces and the x-coordinate bounds of the surfaces can be entered in __constants.py. 
+Finally, we decided to put an apriltag in between each scene to track the synchronization. This should be a unique apriltag not used in different parts of the video. The synchronization surface on this apriltag can also be defined within Pupil Labs Capture. Make sure to note the beginning and ending frame number of appearance in [data/videos/start_end_frames/synchronization/task1.json](/data/videos/start_end_frames/synchronization/task1.json)
 
 ## Usage
 
 ### 1. Data structure (data folder)
+
+Open `__constants.py` and change the variable `data_folder` to point to the data folder as structured below.
 
 - `data/`
   &nbsp;
@@ -80,21 +88,25 @@ The AOI Selector allow the user to define dynamic AOIs. This can be done semi-au
 #### Method 1: Tracking objects semi-automatically
 
 ```bash
-python3 aoi_tracking.py --video="video.mp4" --start_frame=70
+cd tools/AOI-selection/
+python3 aoi_tracking.py --video="video.mp4" --start_frame=100
 ```
 
 **_Usage:_**
 
-1. Run the command above, replacing `vid.mp4` with the path to your video
+1. Run the command above, replacing `video.mp4` with the path to your video
+1. A few questions are asked, such as label of the tracked object, category. These are easily customizable in the script
 1. The video will open a preview screen
 1. If you want to select an object to track from the first frame, draw a box on the video
-1. If not: hint `[enter]` to play the video, hit `[s]` when you want to select an object
+1. If not: hit `[enter]` to play the video, hit `[s]` when you want to select an object
 1. The video starts playing and shows the tracked object. In this state, the results are directly saved to your output csv
 1. When you're done, stop the script by hitting `[q]`
+1. Every AOI is outputted in a csv file with x and y coordinates of the AOI box in every frame. Additional information is outputted alongside each AOI, such as the label
 
 #### Method 2: Selection AOI
 
 ```bash
+cd tools/AOI-selection/
 # use this to select  frames and let the script interpolate the frames in between
 python3 aoi_selection.py --video="video.mp4" --start_frame=100
 
@@ -104,7 +116,8 @@ python3 aoi_selection.py --video="video.mp4" --start_frame=100 --manual
 
 **_Usage:_**
 
-1. Run the command above, replacing `videos/vid.mp4` with the path to your video
+1. Run the command above, replacing `video.mp4` with the path to your video
+1. A few questions are asked, such as label of the tracked object, category. These are easily customizable in the script
 1. The video will open a preview screen
 1. If you want to select a AOI from the first frame
 1. If not: hint `[enter]` to play the video, hit `[s]` when you want to select a AOI
@@ -112,22 +125,24 @@ python3 aoi_selection.py --video="video.mp4" --start_frame=100 --manual
 1. When you're done, stop the script by hitting `[q]`
 1. The script will print the selected bounding boxes to the console and calculate the coordinates of the AOI in between
 1. The script will show you the computed AOI's by showing the video again and save it to the output file.
+1. Every AOI is outputted in a csv file with x and y coordinates of the AOI box in every frame. Additional information is outputted alongside each AOI, such as the label
 
 #### Combining the AOI Selector output
 
 ```bash
+cd tools/AOI-selection/
 python3 concat_files.py --folder data/testvideo
 ```
 
 **_Usage:_**
 
 1. Make sure all output files from script 1 and 2 are saved in one folder
-1. Run the command above, replacing data/testvideo` with the path to your output folder
+1. Run the command above, replacing `data/testvideo` with the path to your output folder
 1. The files will be concatenated to a single file (`combined_data/dataset.csv`). The console will show you the path of this file
 
 ### 3. AOI Overlay
 
-In AOI overlay, 3 tools are presented in order to display selected AOIs and gaze positions. The scripts overlay each frame of the task with information, depending on the chosen tool. Options include: only AOIs, AOIs + gaze of one participant and AOIs + gaze data of all available participants.
+In AOI overlay, 3 tools are presented in order to view selected AOIs and gaze positions. The scripts overlay each frame of the task with information, depending on the chosen tool. Options include: only AOIs, AOIs + gaze of one participant and AOIs + gaze data of all available participants.
 
 #### Overlaying AOIS over a video
 
@@ -148,7 +163,7 @@ python3 overlay_only_aois.py --video="video.mp4" --aois="aois.csv" --start_frame
 ```bash
 # for one participant
 cd tools/overlay/
-python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --participant="{folder to participant}" --start_frame=800
+python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --participant="{folder to participant}" --start_frame=1000
 ```
 
 **_Usage:_**
@@ -163,7 +178,7 @@ python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --pa
 ```bash
 # for multiple participants
 cd tools/overlay/
-python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --task="{folder of participants}" --start_frame=800
+python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --task="{folder of participants}" --start_frame=1000
 ```
 
 **_Usage:_**
@@ -176,7 +191,7 @@ python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.
 
 <img src="flowchart.png" style="width: 300px" />
 
-AOI hit detection provides a tool to calculate measures such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With merge_outputs.py the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
+AOI hit detection provides a tool to calculate measures, such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With merge_outputs.py the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
 
 ```bash
 cd hit-detection
@@ -185,9 +200,10 @@ python3 analyse.py # this script will ask for all input and display where the ou
 
 **_Usage:_**
 
-1. Put the data in the appropiate data folder (see Data structure)
+1. Put the data in the appropriate data folder (see Data structure)
 1. Make sure all other files are in place:
    1. data/videos/synchronization/task.json
+1. Please check [__constants.py](/__constants.py) for variables that can be adjusted to fit own research needs, such as `confidence_threshold`, `minimal_threshold_entry_exit`, `minimal_threshold_dwell` etc.   
 
 #### Merge outputs
 
@@ -202,20 +218,26 @@ python3 merge_outputs.py
 
 ### 5. Apriltags overlay on video
 
-The goal of this part of the HPT toolset is to burn QR codes to a video so it can be used in the trials.
+This part of the TREYESCAN toolkit places apriltags at the borders of the task video.
 
-TODO: See script for usable params
-
-#### Burn QR codes
+#### Place apriltags
 
 ```bash
-python3 burn_qrs.py --name="../videos/vid.mp4" --cols=8 --rows=4 --default-scale=2
-python3 burn_qrs.py --name="../videos/vid.mp4" --cols=8 --rows=4 --default-scale=2 --large-scale=4 --large-scale-indeces=16,18,17,19
+cd apriltags
+python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=4 --default-scale=2
+python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=4 --default-scale=2 --large-scale=4 --large-scale-indices=16,18,17,19
 ```
 
 **Usage:**
-
-- In `/output` it will output the video with burned QR codes and it will provide a png with the QR codes
+- border_apriltags.py can be run with different arguments:
+  --name = 'name of video file', type=str
+  --rows = 'number of apriltags on the y-axis', type=int, default=4
+  --cols = 'number of apriltags on the x-axis', type=int, default=6
+  --default-scale = 'scale factor for all apriltags', type=int, default=3
+  --large-scale = 'scale factor for specific apriltags', type=int, default=3
+  --large-scale-indices = 'indices of the apriltags to enlarge, split by comma', type=str, default=None
+  --with-black-background = 'whether or not to add a black background behind the apriltags in the video', default=True
+- In `/output` a video with apriltags and a png file with apriltag locations will be provided. 
 
 ## 3. Contribution
 
@@ -223,4 +245,4 @@ python3 burn_qrs.py --name="../videos/vid.mp4" --cols=8 --rows=4 --default-scale
 
 ## 4. License
 
-This toolkit is licsensed under [GNU GENERAL PUBLIC LICENSE V3](/LICENSE)
+This toolkit is licensed under [GNU GENERAL PUBLIC LICENSE V3](/LICENSE)

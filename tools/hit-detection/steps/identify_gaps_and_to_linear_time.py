@@ -36,15 +36,15 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
         f.write('Total amount of rows: {} \n\n'.format(total_count))
     
     # Save how many rows will be changed to NaN to a text file
-    removed_NaN_count = df[df['confidence'] < __constants.confidence_treshold].shape[0]
+    removed_NaN_count = df[df['confidence'] < __constants.confidence_threshold].shape[0]
     with open(text_file,"a+") as f:
         percentage = round(removed_NaN_count/total_count*100, 2)
         f.write('Set position of {} rows ({}%) to NaN due to confidence below {} \n'.format(
-            removed_NaN_count, percentage, __constants.confidence_treshold))
+            removed_NaN_count, percentage, __constants.confidence_threshold))
 
-    # Set X and Y to NaN when confidence < treshold
-    df.loc[df['confidence'] < __constants.confidence_treshold, 'true_x_scaled'] = np.NaN
-    df.loc[df['confidence'] < __constants.confidence_treshold, 'true_y_scaled'] = np.NaN
+    # Set X and Y to NaN when confidence < threshold
+    df.loc[df['confidence'] < __constants.confidence_threshold, 'true_x_scaled'] = np.NaN
+    df.loc[df['confidence'] < __constants.confidence_threshold, 'true_y_scaled'] = np.NaN
 
     # Save how many rows will be changed to on_screen == False
     removed_NaN_count = df[df['on_screen'] == False].shape[0]
@@ -59,7 +59,7 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
 
     # For debugging purposes:
     # print(df[['confidence', 'on_screen', 'true_x_scaled', 'true_y_scaled']][df['on_screen'] == False].head())
-    # print(df[['confidence', 'on_screen', 'true_x_scaled', 'true_y_scaled']][df['confidence'] < __constants.confidence_treshold].head())
+    # print(df[['confidence', 'on_screen', 'true_x_scaled', 'true_y_scaled']][df['confidence'] < __constants.confidence_threshold].head())
 
     # Count NaN rows and save to file
     NaN_count = df[df['true_x_scaled'].isnull()].shape[0]
@@ -70,7 +70,7 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
  
     progress.advance(task)
 
-    # Interpolate x and y if the time gaps are < treshold (e.g. 60 ms)
+    # Interpolate x and y if the time gaps are < threshold (e.g. 60 ms)
     df = df.reset_index()
     currentlyAtGap = False
     currentGapStartedAtIndex = np.NaN
@@ -112,7 +112,7 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
             # progress.print('Should we interpolate between index {} and index {}?'.format(currentGapStartedAtIndex, index))
 
             # Save the gap start and end time
-            if(durationOfCurrentGap > __constants.valid_gap_treshold):
+            if(durationOfCurrentGap > __constants.valid_gap_threshold):
                 # We need to save the start and end time of the gap
                 # since we need it in to_lin_time_scale_and_generate_tsv
                 # to NaN the x,y after interpolating is done
@@ -164,8 +164,8 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
         gp.loc[(gp['t'] > timestamp[0] - __constants.add_gap_samples) & \
              (gp['t'] < timestamp[1] + __constants.add_gap_samples), 'y'] = np.NaN
 
-    # the amount of rows left interpolated < valid_gap_treshold
-    # count how many rows we interpolated in total, and subtract the amount of rows in gaps > valid_gap_treshold
+    # the amount of rows left interpolated < valid_gap_threshold
+    # count how many rows we interpolated in total, and subtract the amount of rows in gaps > valid_gap_threshold
 
     rows_to_NaN_without_extended_gap = gp_for_calculating_interpolated_rows[gp_for_calculating_interpolated_rows['x'].isnull()].shape[0]
     interpolated_rows_count = NaN_count - rows_to_NaN_without_extended_gap
@@ -177,8 +177,8 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
         f.write('After interpolation to linear time, set position of {} rows set to NaN\n'
             .format(rows_to_NaN_without_extended_gap))
 
-        f.write('{} interpolated rows are left in the dataset (these where < treshold of {} seconds)\n'
-            .format(interpolated_rows_count, __constants.valid_gap_treshold))
+        f.write('{} interpolated rows are left in the dataset (these where < threshold of {} seconds)\n'
+            .format(interpolated_rows_count, __constants.valid_gap_threshold))
 
         percentage = round(NaN_count_with_extended_gaps/total_count*100, 2)
         f.write('Set position of {} rows ({}% of the original dataset) to NaN (after extending the gaps)\n'

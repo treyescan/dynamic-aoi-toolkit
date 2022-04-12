@@ -6,12 +6,12 @@ def main():
     # parse the arguments used to call this script
     parser = argparse.ArgumentParser()
     parser.add_argument('--name', required=True, help='name of video file', type=str)
-    parser.add_argument('--rows', help='How many QRS on the y-axis', type=int, default=4)
-    parser.add_argument('--cols', help='How many QRS on the x-axis', type=int, default=6)
-    parser.add_argument('--default-scale', help='Scale factor all QRs', type=int, default=3)
-    parser.add_argument('--large-scale', help='Scale factor for specific QRs', type=int, default=3)
-    parser.add_argument('--large-scale-indeces', help='Indeces of the QRs to enlarge, split by comma', type=str, default=None)
-    parser.add_argument('--with-black-background', help='Wether or not to add a black background behind the QRs in the video', type=bool, default=True)
+    parser.add_argument('--rows', help='How many apriltags on the y-axis', type=int, default=4)
+    parser.add_argument('--cols', help='How many apriltags on the x-axis', type=int, default=6)
+    parser.add_argument('--default-scale', help='Scale factor all apriltags', type=int, default=3)
+    parser.add_argument('--large-scale', help='Scale factor for specific apriltags', type=int, default=3)
+    parser.add_argument('--large-scale-indices', help='Indices of the apriltags to enlarge, split by comma', type=str, default=None)
+    parser.add_argument('--with-black-background', help='Whether or not to add a black background behind the apriltags in the video', type=bool, default=True)
 
     args = parser.parse_args()
     src_video = args.name
@@ -20,11 +20,11 @@ def main():
     scale_factor = args.default_scale
     scale_factor_large = args.large_scale
     with_black_background = args.with_black_background
-    large_scale_indeces = args.large_scale_indeces.split(',') if args.large_scale_indeces is not None else []
+    large_scale_indices = args.large_scale_indices.split(',') if args.large_scale_indices is not None else []
 
     # Settings
     tag_family = "tag36h11"
-    out_video = 'output/{}_with_qrs.mp4'.format(os.path.basename(src_video)[:-4])
+    out_video = 'output/{}_with_apriltags.mp4'.format(os.path.basename(src_video)[:-4])
     out_img = 'output/{}_grid.png'.format(os.path.basename(src_video)[:-4])
     out_img_with_labels = 'output/{}_grid_with_labels.png'.format(os.path.basename(src_video)[:-4])
 
@@ -39,12 +39,12 @@ def main():
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(out_video, fourcc, src_fps, (frame_width,frame_height))
 
-    # Load QR codes
-    n_images = (cols - 2) * rows + 4 # total qr's to load
+    # Load apriltags codes
+    n_images = (cols - 2) * rows + 4 # total apriltags to load
     files = sorted(str(path) for path in Path(tag_family).glob("tag*.png"))
     files = files[0 : n_images]
     images = [cv2.imread(img_file) for img_file in files]
-    qr_h, qr_w, qr_c = images[0].shape
+    april_h, april_w, april_c = images[0].shape
 
     # Create white empty image for composing
     grid_img = 0 * np.ones((frame_height, frame_width, 3), dtype=images[0].dtype)
@@ -61,24 +61,24 @@ def main():
 
         # first time: top, second time: bottom
         for i in range(2):
-            # Select QR and scale
-            qr_id = col + i * (rows + cols - 4)
-            scale = 2**scale_factor_large if str(qr_id) in large_scale_indeces else 2**scale_factor
-            qr = cv2.resize(images[qr_id], dsize=None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
+            # Select Apriltag and scale
+            april_id = col + i * (rows + cols - 4)
+            scale = 2**scale_factor_large if str(april_id) in large_scale_indices else 2**scale_factor
+            april = cv2.resize(images[april_id], dsize=None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
             
             # Calculate offsets
-            x_offset = math.floor(x_offset_middle - (qr_w * scale / 2))
-            y_offset = i * (frame_height - qr_h * scale)
+            x_offset = math.floor(x_offset_middle - (april_w * scale / 2))
+            y_offset = i * (frame_height - april_h * scale)
             
-            if x_offset + qr_w * scale <= frame_width:
+            if x_offset + april_w * scale <= frame_width:
                 # Write to grid img
-                grid_img[y_offset : y_offset + (qr_h * scale), x_offset : x_offset + qr_w * scale] = qr
+                grid_img[y_offset : y_offset + (april_h * scale), x_offset : x_offset + april_w * scale] = april
 
                 # Add offsets to dict
-                offsets[qr_id] = (x_offset, y_offset)
+                offsets[april_id] = (x_offset, y_offset)
 
                 # Write to label img
-                writeToImg(grid_img_with_labels, 'ID:{}'.format(qr_id), 
+                writeToImg(grid_img_with_labels, 'ID:{}'.format(april_id), 
                     math.floor(x_offset_middle), (i * frame_height) + 40 - (100 * i))
                 writeToImg(grid_img_with_labels, '{},{}'.format(y_offset, x_offset), 
                     math.floor(x_offset_middle), (i * frame_height) + 60 - (100 * i))
@@ -89,66 +89,66 @@ def main():
 
         # first time: top, second time: bottom
         for i in range(2):
-            # Select QR and scale
-            qr_id = row + cols - 2 + i * (rows + cols - 4)
-            scale = 2**scale_factor_large if str(qr_id) in large_scale_indeces else 2**scale_factor
-            qr = cv2.resize(images[qr_id], dsize=None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
+            # Select April and scale
+            april_id = row + cols - 2 + i * (rows + cols - 4)
+            scale = 2**scale_factor_large if str(april_id) in large_scale_indices else 2**scale_factor
+            april = cv2.resize(images[april_id], dsize=None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
 
             # Calculate offsets
-            x_offset = i * (frame_width - qr_w * scale)
-            y_offset = math.floor(y_offset_middle - (qr_h * scale / 2))
+            x_offset = i * (frame_width - april_w * scale)
+            y_offset = math.floor(y_offset_middle - (april_h * scale / 2))
 
-            if y_offset + qr_h * scale <= frame_height:
+            if y_offset + april_h * scale <= frame_height:
                 # Write to grid img
-                grid_img[y_offset : y_offset + (qr_h * scale), x_offset : x_offset + qr_w * scale] = qr
+                grid_img[y_offset : y_offset + (april_h * scale), x_offset : x_offset + april_w * scale] = april
 
                 # Add offsets to dict
-                offsets[qr_id] = (x_offset, y_offset)
+                offsets[april_id] = (x_offset, y_offset)
 
                 # Write to label img
-                writeToImg(grid_img_with_labels, 'ID:{}'.format(qr_id), 
+                writeToImg(grid_img_with_labels, 'ID:{}'.format(april_id), 
                     (i * frame_width) + 20 - (140 * i), math.floor(y_offset_middle) + 40)
                 writeToImg(grid_img_with_labels, '{},{}'.format(y_offset, x_offset), 
                     (i * frame_width) + 20 - (140 * i), math.floor(y_offset_middle) + 60)
 
     # Step 3: set the corners
     for i in range(4):
-        # Select QR and scale
-        qr_id = (cols - 2) * rows + i
-        scale = 2**scale_factor_large if str(qr_id) in large_scale_indeces else 2**scale_factor
-        qr = cv2.resize(images[qr_id], dsize=None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
+        # Select April and scale
+        april_id = (cols - 2) * rows + i
+        scale = 2**scale_factor_large if str(april_id) in large_scale_indices else 2**scale_factor
+        april = cv2.resize(images[april_id], dsize=None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
         
         # Calculate offsets
         if i == 0:
             x_offset, y_offset = (0, 0) # left top
             top, left = (True, True)
         elif i == 1:
-            x_offset, y_offset = (0, frame_height - qr_h * scale) # left bottom
+            x_offset, y_offset = (0, frame_height - april_h * scale) # left bottom
             top, left = (False, True)
         elif i == 2:
-            x_offset, y_offset = (frame_width - qr_w * scale, 0) # right top
+            x_offset, y_offset = (frame_width - april_w * scale, 0) # right top
             top, left = (True, False)
         elif i == 3:
-            x_offset, y_offset = (frame_width - qr_w * scale, frame_height - qr_h * scale) # right bottom
+            x_offset, y_offset = (frame_width - april_w * scale, frame_height - april_h * scale) # right bottom
             top, left = (False, False)
 
-        if (x_offset + qr_w * scale <= frame_width) and (y_offset + qr_h * scale <= frame_height):
+        if (x_offset + april_w * scale <= frame_width) and (y_offset + april_h * scale <= frame_height):
             # Write to grid img
-            grid_img[y_offset : y_offset + (qr_h * scale), x_offset : x_offset + qr_w * scale] = qr
+            grid_img[y_offset : y_offset + (april_h * scale), x_offset : x_offset + april_w * scale] = april
 
             # Add offsets to dict
-            offsets[qr_id] = (x_offset, y_offset)
+            offsets[april_id] = (x_offset, y_offset)
 
             # Write to label img
-            writeToImg(grid_img_with_labels, 'ID:{}'.format(qr_id), 
+            writeToImg(grid_img_with_labels, 'ID:{}'.format(april_id), 
                 20 if left else frame_width-120, 40 if top else frame_height-60)
             writeToImg(grid_img_with_labels, '{},{}'.format(y_offset, x_offset), 
                 20 if left else frame_width-120, 60 if top else frame_height-40)
 
-    # Save image with QR's
+    # Save image with Apriltags
     cv2.imwrite(out_img, grid_img)
 
-    # Save image with QR's and labels
+    # Save image with Apriltags and labels
     cv2.imwrite(out_img_with_labels, grid_img_with_labels)
 
     # Start writing to the video
@@ -163,10 +163,10 @@ def main():
         try:
             # Add a black background to the grid img if instructed to
             if with_black_background:
-                for qr_id, x_and_y in offsets.items():
+                for april_id, x_and_y in offsets.items():
                     x_offset, y_offset = x_and_y
-                    scale = 2**scale_factor_large if str(qr_id) in large_scale_indeces else 2**scale_factor
-                    cv2.rectangle(frame, (x_offset, y_offset), (x_offset + qr_w * scale - 1, y_offset + qr_h * scale - 1), (0, 0, 0), -1)
+                    scale = 2**scale_factor_large if str(april_id) in large_scale_indices else 2**scale_factor
+                    cv2.rectangle(frame, (x_offset, y_offset), (x_offset + april_w * scale - 1, y_offset + april_h * scale - 1), (0, 0, 0), -1)
 
             # Overlay the grid
             out_frame = cv2.add(frame, grid_img)
