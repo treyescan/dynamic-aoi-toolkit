@@ -148,7 +148,7 @@ python3 overlay_only_aois.py --video="video.mp4" --aois="aois.csv" --start_frame
 ```bash
 # for one participant
 cd tools/overlay/
-python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --participant="{folder to particpant}" --start_frame=800
+python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --participant="{folder to participant}" --start_frame=800
 ```
 
 **_Usage:_**

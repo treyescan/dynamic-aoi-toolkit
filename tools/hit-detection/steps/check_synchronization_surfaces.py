@@ -21,7 +21,7 @@ def check_synchronization_surfaces(participant_id, task_id, synchronization_file
     # Correct the timestamps in synchronization_surface
     first_gaze_timestamp = dummy_surface.iloc[0]['gaze_timestamp']
     synchronization_surface['gaze_timestamp'] = synchronization_surface['gaze_timestamp'] - first_gaze_timestamp
-    synchronization_surface['frame'] = synchronization_surface['gaze_timestamp'] * 25
+    synchronization_surface['frame'] = synchronization_surface['gaze_timestamp'] * __constants.frame_rate
 
     # Fetch expected frame numbers of the synchronization surfaces
     input_file_name = '{}/videos/start_end_frames/synchronization/{}'.format(__constants.data_folder, synchronization_file)
@@ -31,7 +31,7 @@ def check_synchronization_surfaces(participant_id, task_id, synchronization_file
     synchronization_frames = json.loads(a_file.read())
     gps_in_scene = []
 
-    for i in range(len(synchronization_frames) - 1):
+    for i in range(len(synchronization_frames)-1):
         # per scene, we want to know how many synchronization detections we find
         current = synchronization_frames[i]
         next = synchronization_frames[i+1]

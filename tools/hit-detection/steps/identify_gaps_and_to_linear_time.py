@@ -217,7 +217,7 @@ def to_lin_time(progress, gp, output_file_name, participant_id, task_id):
     gazeInt.loc[:, 'y'] = interp(gp.actual_time, gp.true_y_scaled)
 
     # Add frame numbers
-    gazeInt['frame'] = np.ceil((gazeInt['t'] * 25) + 0.00001) - 1
+    gazeInt['frame'] = np.ceil((gazeInt['t'] * __constants.frame_rate) + 0.00001) - 1
     gazeInt['frame'] = gazeInt['frame'].astype(int)
 
     return gazeInt

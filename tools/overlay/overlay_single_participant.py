@@ -39,7 +39,7 @@ df = prepare_aois_df(df)
 #     df_a['actual_time'] = df_a['timestamp'] + abs(df_gp.loc[0, 'gaze_timestamp'])
 # else:
 #     df_a['actual_time'] = df_a['timestamp'] - abs(df_gp.loc[0, 'gaze_timestamp'])
-# df_a['frame'] = df_a['actual_time']*25 + 0.00001
+# df_a['frame'] = df_a['actual_time']*__constants.frame_rate + 0.00001
 # df_a['frame'] = df_a['frame'].astype(int)
 
 # Read video

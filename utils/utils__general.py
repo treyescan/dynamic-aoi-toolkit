@@ -37,7 +37,8 @@ def check_aois_files(file):
     elif not os.path.isfile('{}/input-aoi/{}.csv'.format(__constants.data_folder, file)):
         raise Exception('AOIs file for {}.csv not found'.format(file))
     elif not os.path.isfile('{}/videos/start_end_frames/synchronization/{}.json'.format(__constants.data_folder, file)):
-        raise Exception('synchronization file for {}.json not found'.format(file))
+        location = '{}/videos/start_end_frames/synchronization/{}.json'.format(__constants.data_folder, file)
+        raise Exception('synchronization file for {}.json not found, location: {}'.format(file, location))
 
 def check_participant_id(id, task_id):
     if id == "":

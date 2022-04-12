@@ -1,11 +1,11 @@
 ## Input folder
-data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
+# data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
 # data_folder = '/Users/treyescan/development/validatietaak-data-conf0.8' # path validatietaak on yasmin machine
-# data_folder = '/Users/treyescan/development/dynamic-aoi-toolkit/data'
+data_folder = '/Users/treyescan/development/dynamic-aoi-toolkit/data'
 
 
-input_folder = '{}/input-gp'.format(data_folder)
-# input_folder = '/Users/treyescan/development/validatietaak-data-conf0.8'.format(data_folder)
+# input_folder = '{}/input-gp'.format(data_folder)
+input_folder = '/Users/treyescan/development/validatietaak-data-conf0.8'
 output_folder = '{}/output'.format(data_folder)
 
 ## Maximimum coefficient of linear fit on ijkframes_found per scene
@@ -13,6 +13,9 @@ max_coef_lin_fit_ijkframes = 0.3
 
 ## Sample rate (Hz)
 sample_rate_ET = 240
+
+## Frame rate of task video(fps)
+frame_rate = 25
 
 ## Identifying gaps
 confidence_treshold = 0.8 # %

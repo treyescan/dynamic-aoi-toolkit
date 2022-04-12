@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 def prepare_aois_df(df):
-    df['actual_time'] = df['Frame']/25 # Add timestamp to the AOI data
+    df['actual_time'] = df['Frame']/__constants.frame_rate # Add timestamp to the AOI data
     df['frame'] = df['Frame'].astype(int)
     df = df.round({'actual_time': 2})
 
