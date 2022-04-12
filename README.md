@@ -35,9 +35,12 @@ pip3 install -m requirements.txt
 
 ## Task Preparation
 
-In order to use this toolkit, a task video must be prepared. Videos can be shot in any video dimensions, resolution and frame rate. Just make sure to change the values for total_surface_width, total_surface_height and frame_rate in [__constants.py](/__constants.py).
-When editing the task video, make sure to put apriltags on the borders of the video. border_apriltags.py can be used for this purpose (5. Apriltags overlay on video). Make sure that the appearance of these apriltags marks the beginning of the task as the dummy surface in Pupil Labs Capture. 
-Surfaces should also be defined in Pupil Labs Capture. The number of surfaces and the x-coordinate bounds of the surfaces can be entered in __constants.py. 
+In order to use this toolkit, a task video must be prepared. Videos can be shot in any video dimensions, resolution and frame rate. Just make sure to change the values for `total_surface_width`, `total_surface_height` and `frame_rate` in [__constants.py](/__constants.py).
+
+When editing the task video, make sure to put apriltags on the borders of the video. `border_apriltags.py` can be used for this purpose ([5. Apriltags overlay on video](#5-apriltags-overlay-on-video)). Make sure that the appearance of these apriltags marks the beginning of the task as the dummy surface in Pupil Labs Capture. 
+
+Surfaces should also be defined in Pupil Labs Capture. The number of surfaces and the x-coordinate bounds of the surfaces can be entered in `__constants.py`. 
+
 Finally, we decided to put an apriltag in between each scene to track the synchronization. This should be a unique apriltag not used in different parts of the video. The synchronization surface on this apriltag can also be defined within Pupil Labs Capture. Make sure to note the beginning and ending frame number of appearance in [data/videos/start_end_frames/synchronization/task1.json](/data/videos/start_end_frames/synchronization/task1.json)
 
 ## Usage
@@ -83,7 +86,7 @@ Open `__constants.py` and change the variable `data_folder` to point to the data
 
 ### 2. AOI Selector
 
-The AOI Selector allow the user to define dynamic AOIs. This can be done semi-automatically or manually. Both methods can be used intertwined, after which the data files can be combined. We can check the data files by overlaying the csv files over a video in the AOI overlay tool.
+The AOI Selector allows the user to define dynamic AOIs. This can be done semi-automatically or manually. Both methods can be used simultaneously, after which the data files can be combined. We can check the data files by overlaying the csv files over a video in the [AOI overlay tool](#3-aoi-overlay).
 
 #### Method 1: Tracking objects semi-automatically
 
@@ -183,15 +186,15 @@ python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.
 
 **_Usage:_**
 
-1. all gp.csv in {folder of participants} are fetched (last one)
-1. output: video_with_multiple_gp.mp4
+1. all `gp.csv` in {folder of participants} are fetched (last one)
+1. output: `video_with_multiple_gp.mp4`
    1. NB: video processing make take a while since every frame has to be processed at full resolution
 
 ### 4. AOI Hit detection
 
 <img src="flowchart.png" style="width: 300px" />
 
-AOI hit detection provides a tool to calculate measures, such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With merge_outputs.py the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
+AOI hit detection provides a tool to calculate measures, such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With `merge_outputs.py` the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
 
 ```bash
 cd hit-detection
@@ -200,7 +203,7 @@ python3 analyse.py # this script will ask for all input and display where the ou
 
 **_Usage:_**
 
-1. Put the data in the appropriate data folder (see Data structure)
+1. Put the data in the appropriate data folder (see [Data Structure](#1-data-structure-data-folder))
 1. Make sure all other files are in place:
    1. data/videos/synchronization/task.json
 1. Please check [__constants.py](/__constants.py) for variables that can be adjusted to fit own research needs, such as `confidence_threshold`, `minimal_threshold_entry_exit`, `minimal_threshold_dwell` etc.   
@@ -223,20 +226,20 @@ This part of the TREYESCAN toolkit places apriltags at the borders of the task v
 #### Place apriltags
 
 ```bash
-cd apriltags
-python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=4 --default-scale=2
-python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=4 --default-scale=2 --large-scale=4 --large-scale-indices=16,18,17,19
+cd tools/apriltags
+python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=2 --default-scale=3
+python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=2 --default-scale=3 --large-scale=4 --large-scale-indices=0,5,6,11,12,13,14,15
 ```
 
 **Usage:**
-- border_apriltags.py can be run with different arguments:
-  --name = 'name of video file', type=str
-  --rows = 'number of apriltags on the y-axis', type=int, default=4
-  --cols = 'number of apriltags on the x-axis', type=int, default=6
-  --default-scale = 'scale factor for all apriltags', type=int, default=3
-  --large-scale = 'scale factor for specific apriltags', type=int, default=3
-  --large-scale-indices = 'indices of the apriltags to enlarge, split by comma', type=str, default=None
-  --with-black-background = 'whether or not to add a black background behind the apriltags in the video', default=True
+- `border_apriltags.py` can be run with different arguments:
+  - name = 'name of video file', type=str
+  - rows = 'number of apriltags on the y-axis', type=int, default=4
+  - cols = 'number of apriltags on the x-axis', type=int, default=6
+  - default-scale = 'scale factor for all apriltags', type=int, default=3
+  - large-scale = 'scale factor for specific apriltags', type=int, default=3
+  - large-scale-indices = 'indices of the apriltags to enlarge, split by comma', type=str, default=None
+  - with-black-background = 'whether or not to add a black background behind the apriltags in the video', default=True
 - In `/output` a video with apriltags and a png file with apriltag locations will be provided. 
 
 ## 3. Contribution
