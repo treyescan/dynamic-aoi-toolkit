@@ -106,7 +106,7 @@ def aoi_selection(file, start_frame, step, max_frames, manual):
             cv2.putText(frame, "Selecting AOI on frame {} and/or hit [space] to continue.".format(frames), (30, 30), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1, cv2.LINE_AA);
             
-            aoiBB = cv2.selectAOI('frame', frame, fromCenter=False) 
+            aoiBB = cv2.selectROI('frame', frame, fromCenter=False) 
 
             if not (aoiBB[2] == 0 or aoiBB[3] == 0): # if no width or height
                 selected_aois[frames] = aoiBB;
