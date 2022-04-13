@@ -3,31 +3,33 @@
 # data_folder = '/Users/treyescan/development/validatietaak-data-conf0.8' # path validatietaak on yasmin machine
 data_folder = '/Users/treyescan/development/dynamic-aoi-toolkit/data'
 
-
 # input_folder = '{}/input-gp'.format(data_folder)
 input_folder = '/Users/treyescan/development/validatietaak-data-conf0.8'
 output_folder = '{}/output'.format(data_folder)
 
-## Maximimum coefficient of linear fit on ijkframes_found per scene
-max_coef_lin_fit_ijkframes = 0.3
+## Frame rate of task video
+frame_rate = 25 # fps
 
-## Sample rate (Hz)
+## Screen
+ppi = 94.34 # px per inch
+total_surface_width = 5760 # in px
+total_surface_height = 1200 # in px
+screen_middle_y = 600 # in px
+screen_middle_x = 2880 # in px
+
+distance_to_screen = 65.06 # in cm 
+ppc = ppi/2.54 # px per cm
+z = d = distance_to_screen_px = distance_to_screen * ppc # in pixels
+
+## Sample rate eyetracker (Hz)
 sample_rate_ET = 240
-
-## Frame rate of task video(fps)
-frame_rate = 25
 
 ## Identifying gaps
 confidence_threshold = 0.8 # %
 valid_gap_threshold = 0.075 # s
-add_gap_samples = 0.1 # s (time to "stretch" to valid gaps, both before and after the gap)
+add_gap_samples = 0.1 # s (time to extend valid gaps, both before and after the gap)
 
-## Calculating AOI hits
-distance_to_screen = 65.06 # in cm 
-ppi = 94.34 # px per inch
-ppc = ppi/2.54 # px per cm 37,141732283
-z = d = distance_d = distance_to_screen_px = distance_to_screen * ppc # in pixels
-
+## AOI Margins
 angle_a = error_angle = 1.5 # in degrees
 angle_b = minimal_angle_of_aoi = 1.5 # in degrees
 
@@ -35,13 +37,7 @@ angle_b = minimal_angle_of_aoi = 1.5 # in degrees
 minimal_threshold_entry_exit = 0.1 # in sec
 minimal_threshold_dwell = 0.1 # in sec
 
-## Surfaces & screen
-total_surface_width = 5760 # in px
-total_surface_height = 1200 # in px
-screen_middle_y = 600 # in px
-screen_middle_x = 2880 # in px
-
-## Surface data
+## Surface specifications (as defined in Pupil Labs Capture)
 n_surfaces = 9 # number of surfaces
 surfaces = {}
 surfaces[1] = {'left_border': 0, 'right_border': 691 }
