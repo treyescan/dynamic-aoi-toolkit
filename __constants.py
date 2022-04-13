@@ -17,6 +17,7 @@ total_surface_height = 1200 # in px
 screen_middle_y = 600 # in px
 screen_middle_x = 2880 # in px
 
+## Distance from eyes to screen
 distance_to_screen = 65.06 # in cm 
 ppc = ppi/2.54 # px per cm
 z = d = distance_to_screen_px = distance_to_screen * ppc # in pixels
