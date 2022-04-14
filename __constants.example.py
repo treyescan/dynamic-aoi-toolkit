@@ -1,29 +1,25 @@
-## Input folder
-# data_folder = '/Users/joris/Development/HPT/dynamic-aoi-toolkit/data'
-# data_folder = '/Users/treyescan/development/validatietaak-data-conf0.8' # path validatietaak on yasmin machine
+## Data folders (see 1. Data structure in the README)
 data_folder = '/Users/treyescan/development/dynamic-aoi-toolkit/data'
-
-# input_folder = '{}/input-gp'.format(data_folder)
-input_folder = '/Users/treyescan/development/validatietaak-data-conf0.8'
+input_folder = '{}/input-gp'.format(data_folder)
 output_folder = '{}/output'.format(data_folder)
 
 ## Frame rate of task video
 frame_rate = 25 # fps
 
-## Screen
-ppi = 94.34 # px per inch
+## Screen dimensions
 total_surface_width = 5760 # in px
 total_surface_height = 1200 # in px
 screen_middle_y = 600 # in px
 screen_middle_x = 2880 # in px
 
-## Distance from eyes to screen
-distance_to_screen = 65.06 # in cm 
+## Physical setup
+distance_to_screen = 65 # distance to screen in cm 
+ppi = 94.34 # px per inch (monitor specification)
 ppc = ppi/2.54 # px per cm
-z = d = distance_to_screen_px = distance_to_screen * ppc # in pixels
+z = d = distance_to_screen * ppc # distance to screen in pixels
 
-## Sample rate eyetracker (Hz)
-sample_rate_ET = 240
+## Sample rate eyetracker
+sample_rate_ET = 240 # in Hz
 
 ## Identifying gaps
 confidence_threshold = 0.8 # %

@@ -33,11 +33,13 @@ git clone git@github.com:treyescan/dynamic-aoi-toolkit.git
 pip3 install -m requirements.txt
 ```
 
+After that, make sure to copy `__constants.example.py` to `__constants.py` and change the parameters to your needs. Change the variable `data_folder` to point to the data folder as outlined [here](#1-data-structure-data-folder).
+
 ## Task Preparation
 
-In order to use this toolkit, a task video must be prepared. Videos can be created in any video dimensions, resolution and frame rate. Just make sure to change the values for `total_surface_width`, `total_surface_height` and `frame_rate` in [__constants.py](/__constants.py). The distance from eyes to screen: `distance_to_screen` and resolution of the screens: `ppi` should also be entered. 
+In order to use this toolkit, a task video must be prepared. Videos can be created in any video dimensions, resolution and frame rate. Just make sure to change the values for `total_surface_width`, `total_surface_height` and `frame_rate` in [\_\_constants.py](/__constants.py). The distance from eyes to screen: `distance_to_screen` and resolution of the screens: `ppi` should also be entered.
 
-When preparing the task video, make sure to place apriltags on the borders of the video. `border_apriltags.py` can be used for this purpose ([5. Apriltags overlay on video](#5-apriltags-overlay-on-video)). The appearance of these apriltags marks the beginning of the task as the dummy surface in Pupil Capture. This should be defined in Pupil Capture. 
+When preparing the task video, make sure to place apriltags on the borders of the video. `border_apriltags.py` can be used for this purpose ([5. Apriltags overlay on video](#5-apriltags-overlay-on-video)). The appearance of these apriltags marks the beginning of the task as the dummy surface in Pupil Capture. This should be defined in Pupil Capture.
 
 Screen surfaces should also be defined in Pupil Labs Capture. The number of surfaces and the x-coordinate bounds of the surfaces can be entered in `__constants.py`. This information is necessary when combining the surface files to one gaze position file in [AOI Hit detection](#4-aoi-hit-detection).
 
@@ -46,8 +48,6 @@ Finally, we decided to put an apriltag in between each scene to track the synchr
 ## Usage
 
 ### 1. Data structure (data folder)
-
-Open `__constants.py` and change the variable `data_folder` to point to the data folder as structured below.
 
 - `data/`
   &nbsp;
@@ -181,7 +181,7 @@ python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --pa
 ```bash
 # for multiple participants
 cd tools/overlay/
-python3 tools/overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --task="{folder of participants}" --start_frame=1000
+python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --task="{folder of participants}" --start_frame=1000
 ```
 
 **_Usage:_**
@@ -206,7 +206,13 @@ python3 analyse.py # this script will ask for all input and display where the ou
 1. Put the data in the appropriate data folder (see [Data Structure](#1-data-structure-data-folder)).
 1. Make sure all other files are in place:
    1. data/videos/synchronization/task.json
-1. Please check [__constants.py](/__constants.py) for variables that can be adjusted to fit own research needs, such as `confidence_threshold`, `minimal_threshold_entry_exit`, `minimal_threshold_dwell` etc.   
+1. Please check [\_\_constants.py](/__constants.py) for variables that can be adjusted to fit own research needs, such as `confidence_threshold`, `minimal_threshold_entry_exit`, `minimal_threshold_dwell` etc.
+
+**_Parameters:_**
+
+| Parameter              | Description |
+| ---------------------- | ----------- |
+| `confidence_threshold` | lorem ipsum |
 
 #### Merge outputs
 
@@ -232,6 +238,7 @@ python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=2 --defau
 ```
 
 **Usage:**
+
 - `border_apriltags.py` can be run with different arguments:
   - name = 'name of video file', type=str
   - rows = 'number of apriltags on the y-axis', type=int, default=4
@@ -240,7 +247,7 @@ python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=2 --defau
   - large-scale = 'scale factor for specific apriltags', type=int, default=3
   - large-scale-indices = 'indices of the apriltags to enlarge, split by comma', type=str, default=None
   - with-black-background = 'whether or not to add a black background behind the apriltags in the video', default=True
-- In `/output` a video with apriltags and a png file with apriltag locations will be provided. 
+- In `/output` a video with apriltags and a png file with apriltag locations will be provided.
 
 ## 3. Contribution
 
