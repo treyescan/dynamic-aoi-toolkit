@@ -56,7 +56,7 @@ start_frame = args.start_frame
 
 # Open all gaze position files (gp.csv in {task} folder of all participants)
 dfs_gp = []
-pattern = "{}/*/{}/gp.csv".format(__constants.input_folder, task)
+pattern = "/{}/*/{}/gp.csv".format(__constants.input_folder, task)
 gaze_position_files = glob.glob(pattern)
 for gp_file in gaze_position_files:
     df_gp = pd.read_csv(gp_file)
@@ -114,19 +114,20 @@ while(cap.isOpened()):
             # Draw first GPs
             gp_index = 0
             for df_gp in dfs_gp:
-                gaze_position_overlays = df_gp[df_gp['frame'] == frame_nr]
-                print('found {} gaze positions around frame {}'.format(len(gaze_position_overlays), frame_nr))
+                if('frame' in df_gp.columns):
+                    gaze_position_overlays = df_gp[df_gp['frame'] == frame_nr]
+                    print('found {} gaze positions around frame {}'.format(len(gaze_position_overlays), frame_nr))
 
-                color = colors[gp_index % len(colors)]
+                    color = colors[gp_index % len(colors)]
 
-                for index, gaze_position in gaze_position_overlays.iterrows():
-                    if not math.isnan(gaze_position['x']) and not math.isnan(gaze_position['y']):
-                        x = gaze_position['x'] + __constants.total_surface_width/2
-                        y = __constants.total_surface_height - (gaze_position['y'] + __constants.total_surface_height/2)
+                    for index, gaze_position in gaze_position_overlays.iterrows():
+                        if not math.isnan(gaze_position['x']) and not math.isnan(gaze_position['y']):
+                            x = gaze_position['x'] + __constants.total_surface_width/2
+                            y = __constants.total_surface_height - (gaze_position['y'] + __constants.total_surface_height/2)
 
-                        cv2.circle(frame, (int(x), int(y)), 20, color, -1)
-                        
-                gp_index = gp_index + 1
+                            cv2.circle(frame, (int(x), int(y)), 20, color, -1)
+                            
+                    gp_index = gp_index + 1
 
             # Draw frame nr on frame
             cv2.rectangle(frame, (0, 0), (400, 80), (255, 255, 255), -1, 1)
