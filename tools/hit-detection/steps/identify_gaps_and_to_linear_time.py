@@ -140,6 +140,17 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
     json.dump(gap_timestamps_to_save, file_handle)
     file_handle.close()
 
+    # Gaps at the very start of the dataset, could not have been interpolated (because we are interpolating forwards)
+    # However, these values should be interpolated as well.
+    # Thus, we "fill backwards" those NaN cells at the very start with the first known value
+    # In most cases (when gaps are not very short) these values will be replaced by NaNs after interpolating
+    if(pd.isna(df.iloc[0, df.columns.get_loc('true_x_scaled')])):
+         for index, gp in df.iterrows():
+             if(not pd.isna(df.iloc[index, df.columns.get_loc('true_x_scaled')])):
+                 df.at[0:index-1, 'true_x_scaled'] = df.iloc[index, df.columns.get_loc('true_x_scaled')]
+                 df.at[0:index-1, 'true_y_scaled'] = df.iloc[index, df.columns.get_loc('true_y_scaled')]
+                 break
+
     # Interpolate to linear time scale
     gp = to_lin_time(progress, df, output_file_name, participant_id, task_id)
     
