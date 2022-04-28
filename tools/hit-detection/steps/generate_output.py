@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('../../../')
 
 import __constants, os.path, subprocess, json, math, platform, re
@@ -212,6 +213,13 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
     d = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
     output_file_name = '{}/{}/{}/{}_output_{}'.format(
         __constants.output_folder, participant_id, task_id, participant_id, d)
+
+    # When is_hit = 0, all columns to the right of is_hit are not informative
+    # To avoid miscommunication, we remove those columns
+    df.loc[(df['is_hit'] == 0), 'ratio_dwell_duration_total_appereance'] = math.nan
+    df.loc[(df['is_hit'] == 0), 'amount_entries_exits'] = math.nan
+    df.loc[(df['is_hit'] == 0), 'total_dwell_duration'] = math.nan
+    df.loc[(df['is_hit'] == 0), 'total_diversion_duration'] = math.nan
     
     # Remove empty cells
     df = pd.read_csv(StringIO(re.sub(',+',',',df.to_csv())))
