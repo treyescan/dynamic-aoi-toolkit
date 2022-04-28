@@ -117,6 +117,8 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
                 # since we need it in to_lin_time_scale_and_generate_tsv
                 # to NaN the x,y after interpolating is done
                 startTimestamp = df.iloc[(currentGapStartedAtIndex - 1)]['actual_time'] 
+                if(currentGapStartedAtIndex == 0):
+                    startTimestamp = 0
                 endTimestamp = df.iloc[index]['actual_time']
                 gap_timestamps_to_save.append([startTimestamp, endTimestamp])
 
