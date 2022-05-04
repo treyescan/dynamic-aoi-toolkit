@@ -218,7 +218,7 @@ python3 analyse.py # this script will ask for all input and display where the ou
 | `error_angle`                  | °    | Margin that is added around AOIs in degrees. |
 | `minimal_angle_of_aoi`         | °    | A margin is added if AOIs are smaller than the `minimal_angle_of_aoi`, after that the margin of angle_a is added. |
 | `minimal_threshold_entry_exit` | s    | If the time between an AOI entry and AOI exit is shorter than this threshold, these visits are combined as one visit. |
-| `minimal_threshold_dwell`      |      |When the dwell duration is below this threshold, it will not be considered in total_dwell_time. |
+| `minimal_threshold_dwell`      | s    |When the dwell duration is below this threshold, it will not be considered in total_dwell_time. |
 
 
 #### Merge outputs
