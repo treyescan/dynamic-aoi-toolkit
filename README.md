@@ -210,9 +210,16 @@ python3 analyse.py # this script will ask for all input and display where the ou
 
 **_Parameters:_**
 
-| Parameter              | Description |
-| ---------------------- | ----------- |
-| `confidence_threshold` | lorem ipsum |
+| Parameter                      | Description |
+| ------------------------------ | ----------- |
+| `confidence_threshold`         | Pupil Labs provides a quality assessment of the pupil detection for every sample, as a "confidence" value between 0.0 (pupil could not be detected) and 1.0 (pupil was detected with very high certainty). Values below this threshold are marked as gap samples. |
+| `valid_gap_threshold`          | Threshold for gaps to be filled in by linear interpolation. Gaps longer than this threshold remain gap samples. |
+| `add_gap_samples`              | The samples around a gap to be considered as additional gap samples, where the pupil of the eye may be partially occluded. |
+| `error_angle`                  | Margin that is added around AOIs in degrees |
+| `minimal_angle_of_aoi`         | A margin is added if AOIs are smaller than the `minimal_angle_of_aoi`, after that the margin of angle_a is added |
+| `minimal_threshold_entry_exit` | If the time between an AOI entry and AOI exit is shorter than this threshold, these visits are combined as one visit |
+| `minimal_threshold_dwell`      | When the dwell duration is below this threshold, it will not be considered in total_dwell_time |
+
 
 #### Merge outputs
 

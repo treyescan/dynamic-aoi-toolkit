@@ -22,17 +22,17 @@ z = d = distance_to_screen * ppc # distance to screen in pixels
 sample_rate_ET = 240 # in Hz
 
 ## Identifying gaps
-confidence_threshold = 0.8 # %
-valid_gap_threshold = 0.075 # s
+confidence_threshold = 0.8 # % (value provided by Pupil Labs, indication of quality assessment of pupil detection)
+valid_gap_threshold = 0.075 # s (gaps shorter than this treshold are filled in by linear interpolation)
 add_gap_samples = 0.1 # s (time to extend valid gaps, both before and after the gap)
 
 ## AOI Margins
-angle_a = error_angle = 1.5 # in degrees
-angle_b = minimal_angle_of_aoi = 1.5 # in degrees
+angle_a = error_angle = 1.5 # in degrees (margin that is added around AOIs)
+angle_b = minimal_angle_of_aoi = 1.5 # in degrees (a margin is added if AOIs are smaller than this angle, after that the margin of angle_a is added)
 
 # Filter short times between exits and entries
-minimal_threshold_entry_exit = 0.1 # in sec
-minimal_threshold_dwell = 0.1 # in sec
+minimal_threshold_entry_exit = 0.1 # in sec (if time between an entry and exit in an AOI is shorter than this threshold, these visits are combined)
+minimal_threshold_dwell = 0.1 # in sec (if the duration of a dwell is below this threshold, it will not be considered in total_dwell_time)
 
 ## Surface specifications (as defined in Pupil Labs Capture)
 n_surfaces = 9 # number of surfaces
