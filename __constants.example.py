@@ -22,7 +22,7 @@ z = d = distance_to_screen * ppc # distance to screen in pixels
 sample_rate_ET = 240 # in Hz
 
 ## Identifying gaps
-confidence_threshold = 0.8 # % (value provided by Pupil Labs, indication of quality assessment of pupil detection)
+confidence_threshold = 0.8 # (value provided by Pupil Labs, indication of quality assessment of pupil detection)
 valid_gap_threshold = 0.075 # s (gaps shorter than this treshold are filled in by linear interpolation)
 add_gap_samples = 0.1 # s (time to extend valid gaps, both before and after the gap)
 
