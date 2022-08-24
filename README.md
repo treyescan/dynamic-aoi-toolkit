@@ -20,8 +20,9 @@ This toolkit includes tools to analyse Pupil Labs Core eye tracking gaze data in
       1. Analyze metrics such as dwell time, time to first entry etc.
       1. Merge outputs
    1. [Apriltags on video](#5-apriltags-on-video)
-1. [Contribution](#3-contribution)
-1. [License](#4-license)
+1. [Citation](#3-citation)
+1. [Contribution](#4-contribution)
+1. [License](#5-license)
 
 ## Installation
 
@@ -210,16 +211,15 @@ python3 analyse.py # this script will ask for all input and display where the ou
 
 **_Parameters:_**
 
-| Parameter                      | Unit | Description |
-| ------------------------------ | ---- | ----------- |
+| Parameter                      | Unit | Description                                                                                                                                                                                                                                                       |
+| ------------------------------ | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `confidence_threshold`         | -    | Pupil Labs provides a quality assessment of the pupil detection for every sample, as a "confidence" value between 0.0 (pupil could not be detected) and 1.0 (pupil was detected with very high certainty). Values below this threshold are marked as gap samples. |
-| `valid_gap_threshold`          | s    | Threshold for gaps to be filled in by linear interpolation. Gaps longer than this threshold remain gap samples. |
-| `add_gap_samples`              | s    | The samples around a gap to be considered as additional gap samples, where the pupil of the eye may be partially occluded. |
-| `error_angle`                  | °    | Margin that is added around AOIs in degrees. |
-| `minimal_angle_of_aoi`         | °    | A margin is added if AOIs are smaller than the `minimal_angle_of_aoi`, after that the margin of angle_a is added. |
-| `minimal_threshold_entry_exit` | s    | If the time between an AOI entry and AOI exit is shorter than this threshold, these visits are combined as one visit. |
-| `minimal_threshold_dwell`      | s    |When the dwell duration is below this threshold, it will not be considered in total_dwell_time. |
-
+| `valid_gap_threshold`          | s    | Threshold for gaps to be filled in by linear interpolation. Gaps longer than this threshold remain gap samples.                                                                                                                                                   |
+| `add_gap_samples`              | s    | The samples around a gap to be considered as additional gap samples, where the pupil of the eye may be partially occluded.                                                                                                                                        |
+| `error_angle`                  | °    | Margin that is added around AOIs in degrees.                                                                                                                                                                                                                      |
+| `minimal_angle_of_aoi`         | °    | A margin is added if AOIs are smaller than the `minimal_angle_of_aoi`, after that the margin of angle_a is added.                                                                                                                                                 |
+| `minimal_threshold_entry_exit` | s    | If the time between an AOI entry and AOI exit is shorter than this threshold, these visits are combined as one visit.                                                                                                                                             |
+| `minimal_threshold_dwell`      | s    | When the dwell duration is below this threshold, it will not be considered in total_dwell_time.                                                                                                                                                                   |
 
 #### Merge outputs
 
@@ -256,10 +256,18 @@ python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=2 --defau
   - with-black-background = 'whether or not to add a black background behind the apriltags in the video', default=True
 - In `/output` a video with apriltags and a png file with apriltag locations will be provided.
 
-## 3. Contribution
+## 3. Citation
+
+```
+Faraji, Y., & van Rijn, J. W. (2020). Dynamic AOI Toolkit v1.0.0 (Version v1.0.0) [Computer software]. https://doi.org/10.5281/zenodo.7019196
+```
+
+DOI: `10.5281/zenodo.7019196`
+
+## 4. Contribution
 
 [Issues](https://github.com/treyescan/dynamic-aoi-toolkit/issues/new) and other contributions are welcome.
 
-## 4. License
+## 5. License
 
 This toolkit is licensed under [GNU GENERAL PUBLIC LICENSE V3](/LICENSE)
