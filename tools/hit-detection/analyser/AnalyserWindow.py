@@ -20,7 +20,6 @@ class AnalyserWindow(QWidget):
         self.initUI()  # init the UI
 
     def initUI(self):
-        self.center()
         self.setWindowTitle('Treyescan GP x AOI Analyser')
 
         self.resize(502, 278)
@@ -67,13 +66,6 @@ class AnalyserWindow(QWidget):
         self.listView.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.show()
-
-    def center(self):
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
 
     def fetchFilesToAnalyse(self):
         participants_to_analyse = glob.glob(
