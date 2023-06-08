@@ -1,4 +1,4 @@
-# Dynamic AOI Toolkit
+# Dynamic AOI Toolkit v1.1
 
 This toolkit includes tools to analyse Pupil Labs Core eye tracking gaze data in relation to dynamic areas of interest (AOI) on a wide screen. The tools included are: (1) AOI selector (both automatic and manual), (2) overlay AOIs and gaze on the task video, and (3) AOI hit detection.
 
