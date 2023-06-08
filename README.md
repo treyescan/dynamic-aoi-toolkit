@@ -17,9 +17,10 @@ This toolkit includes tools to analyse Pupil Labs Core eye tracking gaze data in
       1. Overlaying AOIS and gaze positions over a video
       1. Overlaying gaze positions of multiple participants and AOIs over a video
    1. [AOI Hit detection](#4-aoi-hit-detection)
-      1. Analyze metrics such as dwell time, time to first entry etc.
+      1. Analyze metrics such as dwell time, entry time etc.
       1. Merge outputs
    1. [Apriltags on video](#5-apriltags-on-video)
+   1. [Screen analysis](#6-screen-analysis)
 1. [Citation](#3-citation)
 1. [Contribution](#4-contribution)
 1. [License](#5-license)
@@ -182,7 +183,7 @@ python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --pa
 ```bash
 # for multiple participants
 cd tools/overlay/
-python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --task="{folder of participants}" --start_frame=1000
+python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --task="{folder of participants}" --start_frame=1000 --moment="T1"
 ```
 
 **_Usage:_**
@@ -195,11 +196,18 @@ python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" -
 
 <img src="flowchart.png" style="width: 300px" />
 
-AOI hit detection provides a tool to calculate measures, such as dwell time and time to first entry. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With `merge_outputs.py` the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
+AOI hit detection provides a tool to calculate measures, such as dwell time and entry time. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With `merge_outputs.py` the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
 
 ```bash
 cd hit-detection
-python3 analyse.py # this script will ask for all input and display where the output files are saved
+python3 analyse.py --p P-006 --mm T1 --t Deel1 --st 1
+
+# to see what arguments we may provide
+python3 analyse.py -h
+
+# to run multi analysis on all P-* and all T* and all Tasks
+# optional: provide the starting task for all analyses
+python3 better-multi-analyse.py --st 1
 ```
 
 **_Usage:_**
@@ -235,6 +243,13 @@ python3 merge_outputs.py
 ### 5. Apriltags on video
 
 This part of the TREYESCAN toolkit places apriltags at the borders of the task video.
+
+### 6. Screen analysis
+
+```bash
+cd screen-regions
+python3 analyse.py
+```
 
 #### Place apriltags
 
