@@ -4,14 +4,14 @@ sys.path.append('../../../')
 import __constants
 import pandas as pd
 
-def apply_median_filter_on_coordinates(participant_id, task_id, progress, task):
+def apply_median_filter_on_coordinates(participant_id, measurement_moment, task_id, progress, task):
     progress.print("[blue]Applying median filter on true_x_scaled and true_y_scaled")
 
-    input_file_name = '{}/{}/{}/merged_raw_gp.csv'.format(
-        __constants.input_folder, participant_id, task_id)
+    input_file_name = '{}/{}/{}/{}/merged_raw_gp.csv'.format(
+        __constants.input_folder, participant_id, measurement_moment, task_id)
 
-    output_file_name = '{}/{}/{}/merged_mf_gp.csv'.format(
-        __constants.input_folder, participant_id, task_id)
+    output_file_name = '{}/{}/{}/{}/merged_mf_gp.csv'.format(
+        __constants.input_folder, participant_id, measurement_moment, task_id)
 
     df = pd.read_csv(input_file_name)
 

@@ -20,11 +20,15 @@ def show_error(message, progress):
     raise Exception(message)
 
 def ask_for_participant_id():
-    id = console.input("Provide the [bold cyan]participant id[/bold cyan] [i bright_black](default: P-022)[/i bright_black]: ") or "P-022"
+    id = console.input("Provide the [bold cyan]participant id[/bold cyan] [i bright_black](default: P-001)[/i bright_black]: ") or "P-001"
     return id
 
+def ask_for_measurement_moment():
+    m = console.input("Provide the [bold cyan]measurement moment[/bold cyan] [i bright_black](default: T1)[/i bright_black]: ") or "T1"
+    return m
+
 def ask_for_task_id():
-    file = console.input("Provide the [bold cyan]task ID (e.g. task1)[/bold cyan] (for input folder and both AOI & synchronization file) [i bright_black](default: task1)[/i bright_black]: ") or "task1"
+    file = console.input("Provide the [bold cyan]task ID (e.g. Deel1)[/bold cyan] (for input folder and both AOI & synchronization file) [i bright_black](default: Deel1)[/i bright_black]: ") or "Deel1"
     check_aois_files(file)
     return file
 
@@ -40,18 +44,25 @@ def check_aois_files(file):
         location = '{}/videos/start_end_frames/synchronization/{}.json'.format(__constants.data_folder, file)
         raise Exception('synchronization file for {}.json not found, location: {}'.format(file, location))
 
-def check_participant_id(id, task_id):
+def check_participant_id(id, measurement_moment, task_id):
     if id == "":
         raise Exception('No participant ID provided')
+    elif measurement_moment == "":
+        raise Exception('No measurement moment provided')
     elif not os.path.isdir('{}/{}'.format(__constants.input_folder, id)):
         raise Exception('Input folder for participant {} not found'.format(id))
 
     if not os.path.isdir(__constants.output_folder):
         os.mkdir(__constants.output_folder)
+
     if not os.path.isdir('{}/{}'.format(__constants.output_folder, id)):
         os.mkdir('{}/{}'.format(__constants.output_folder, id))
-    if not os.path.isdir('{}/{}/{}'.format(__constants.output_folder, id, task_id)):
-        os.mkdir('{}/{}/{}'.format(__constants.output_folder, id, task_id))
+
+    if not os.path.isdir('{}/{}/{}'.format(__constants.output_folder, id, measurement_moment)):
+        os.mkdir('{}/{}/{}'.format(__constants.output_folder, id, measurement_moment))
+
+    if not os.path.isdir('{}/{}/{}/{}'.format(__constants.output_folder, id, measurement_moment, task_id)):
+        os.mkdir('{}/{}/{}/{}'.format(__constants.output_folder, id, measurement_moment, task_id))
 
 def prepare_aoi_tasks(progress):
      return [

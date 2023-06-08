@@ -6,20 +6,21 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-def check_synchronization_surfaces(participant_id, task_id, synchronization_file, console):
+def check_synchronization_surfaces(participant_id, measurement_moment, task_id, synchronization_file, console):
 
     # Open synchronization surface data file
-    synchronization_surface_name = '{}/{}/{}/gaze_positions_on_surface_ijksurface.csv'.format(
-        __constants.input_folder, participant_id, task_id)
+    synchronization_surface_name = '{}/{}/{}/{}/gaze_positions_on_surface_ijksurface.csv'.format(
+        __constants.input_folder, participant_id, measurement_moment, task_id)
     synchronization_surface = pd.read_csv(synchronization_surface_name)
 
     # Open the dummy surface gaze positon data
-    dummy_surface_name = '{}/{}/{}/gaze_positions_on_surface_dummysurface.csv'.format(
-        __constants.input_folder, participant_id, task_id)
-    dummy_surface = pd.read_csv(dummy_surface_name)
+    surface_5_name = '{}/{}/{}/{}/gaze_positions_on_surface_Surface5WB.csv'.format(
+        __constants.input_folder, participant_id, measurement_moment, task_id)
+    surface_5 = pd.read_csv(surface_5_name)
 
     # Correct the timestamps in synchronization_surface
-    first_gaze_timestamp = dummy_surface.iloc[0]['gaze_timestamp']
+    # Get the first timestamp of surface 5
+    first_gaze_timestamp = surface_5.iloc[0]['gaze_timestamp']
     synchronization_surface['gaze_timestamp'] = synchronization_surface['gaze_timestamp'] - first_gaze_timestamp
     synchronization_surface['frame'] = synchronization_surface['gaze_timestamp'] * __constants.frame_rate
 
@@ -64,7 +65,7 @@ def check_synchronization_surfaces(participant_id, task_id, synchronization_file
     # plt.show()
     # sys.exit()
 
-    filename = '{}/{}/{}/frames_with_ijksurfaces_found_in_scenes.png'.format(__constants.output_folder, participant_id, task_id)
+    filename = '{}/{}/{}/{}/frames_with_ijksurfaces_found_in_scenes.png'.format(__constants.output_folder, participant_id, measurement_moment, task_id)
     plt.savefig(filename)
 
     # regression: ax + b = y
@@ -74,4 +75,4 @@ def check_synchronization_surfaces(participant_id, task_id, synchronization_file
     console.print('[purple]Found linear regression fit across previous array, with coefficient: {}'.format(a))
     console.print('[purple]Saved file to {}'.format(filename))
     
-    plt.show()
+    # plt.show()

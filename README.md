@@ -208,6 +208,8 @@ python3 analyse.py -h
 # to run multi analysis on all P-* and all T* and all Tasks
 # optional: provide the starting task for all analyses
 python3 better-multi-analyse.py --st 1
+
+# NB: the multi-analyse.py script can be used (which is slower – not multi threaded) when the GUI can't be opened
 ```
 
 **_Usage:_**

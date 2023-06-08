@@ -7,10 +7,10 @@ import pandas as pd
 from utils.utils__aois import prepare_aois_df
 from utils.utils__general import show_error
 
-def identify_entries_and_exits(participant_id, task_id, aois_file, progress, task):
+def identify_entries_and_exits(participant_id, measurement_moment, task_id, aois_file, progress, task):
     progress.print("[bold yellow]We are starting identifying entries and exits")
 
-    input_file_name = '{}/{}/{}/gp_x_aoi.csv'.format(__constants.output_folder, participant_id, task_id)
+    input_file_name = '{}/{}/{}/{}/gp_x_aoi.csv'.format(__constants.output_folder, participant_id, measurement_moment, task_id)
     if not os.path.isfile(input_file_name):
         show_error('Input file for step 4 is not found. Run step 3 first.', progress)
 
@@ -58,7 +58,7 @@ def identify_entries_and_exits(participant_id, task_id, aois_file, progress, tas
     
     progress.advance(task)
 
-    entries_exits_file = '{}/{}/{}/entries_exits.json'.format(__constants.output_folder, participant_id, task_id)
+    entries_exits_file = '{}/{}/{}/{}/entries_exits.json'.format(__constants.output_folder, participant_id, measurement_moment, task_id)
 
     file_handle = open(entries_exits_file, "w")
     json.dump(entries_and_exits, file_handle)
