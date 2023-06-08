@@ -214,6 +214,8 @@ python3 better-multi-analyse.py --st 1
 # NB: the multi-analyse.py script can be used (which is slower – not multi threaded) when the GUI can't be opened
 ```
 
+<img src="better-multi-analyse-screenshot.png" width="400">
+
 **_Usage:_**
 
 1. Put the data in the appropriate data folder (see [Data Structure](#1-data-structure-data-folder)).
