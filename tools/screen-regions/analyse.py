@@ -3,32 +3,15 @@ import pandas as pd
 sys.path.append('../../')
 import __constants
 from datetime import datetime
-# per participant moeten we een output krijgen
 
-# input:
-# Centrale graden:
-# 10 graden -> 2669	  3091
-# 20 graden -> 2454	  3306
-# 30 graden -> 2232	  3528
-# 40 graden -> 2000	  3760
-# 50 graden -> 1753	  4007
-# 60 graden -> 1485	  4275
-# 70 graden -> 1188   4572
-# 80 graden -> 852	  4908
-# 90 graden -> 463	  5297
-# 100 graden -> 0	  5760
+'''
+Script to analyse how much time particpant spent gazing at 
+regions of the screen. Output format of the csv:
 
-# links ->      0     2880
-# rechts ->     2880  5760
-
-# optie om evt. meer toe te voegen...
-
-# neem gp.csv
-# hoeveel van de tijd binnen die area gekeken wordt
-
-# label                   x1        x2       y1     y2      total_dwell_duration (s)          ratio_dwell_duration
-# centrale 10 graden      500       1000     0      0       5.34                              50%
-# ...
+label                   x1        x2       y1     y2      total_dwell_duration (s)      ratio_dwell_duration
+{name of region}        500       1000     0      0       5.34                           50%
+...
+'''
 
 def compute_deg_times(df, session_time, label, x1, x2, y1, y2):
     # count rows within deg field
