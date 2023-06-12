@@ -1,7 +1,7 @@
-matplotlib
-numpy
-opencv_contrib_python
-pandas
-rich
-scipy
-pyqt5
+matplotlib==3.7.1
+numpy==1.24.2
+opencv-contrib-python==4.7.0.72
+pandas==1.5.3
+rich==13.3.2
+scipy==1.10.1
+PyQt5==5.13.2
