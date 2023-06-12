@@ -280,10 +280,11 @@ python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=2 --defau
 ## 3. Citation
 
 ```
-Faraji, Y., & van Rijn, J. W. (2022). Dynamic AOI Toolkit v1.0.0 (Version v1.0.0) [Computer software]. https://doi.org/10.5281/zenodo.7019196
+Faraji, Y., & van Rijn, J. W. (2022). Dynamic AOI Toolkit v1.0.0 (Version v1.0.0) [Computer software]. https://doi.org/10.5281/zenodo.8029272
 ```
 
-DOI: `10.5281/zenodo.7019196`
+- DOI v1.0.0: `10.5281/zenodo.7019196`
+- DOI V1.1.0: `10.5281/zenodo.8029272`
 
 ## 4. Contribution
 
