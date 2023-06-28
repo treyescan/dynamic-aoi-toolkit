@@ -1,4 +1,6 @@
 */
 !example-participant/
-!example-participant/task1
+!example-participant/T1
+!example-participant/T2
+!example-participant/T1/task1
 !.gitignore

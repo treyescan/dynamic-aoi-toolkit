@@ -4,19 +4,20 @@ sys.path.append('../../../')
 
 import __constants, os.path, subprocess, json, math, platform, re
 import pandas as pd
+import numpy as np
 from io import StringIO
 from datetime import datetime
 from utils.utils__general import show_error
 from utils.utils__aois import prepare_aois_df
 
-def generate_output(participant_id, task_id, aois_file, progress, task):
+def generate_output(participant_id, measurement_moment, task_id, aois_file, batch_id, progress, task):
     progress.print("[bold yellow]We are starting generating output")
 
-    input_file_name = '{}/{}/{}/entries_exits.json'.format(__constants.output_folder, participant_id, task_id)
+    input_file_name = '{}/{}/{}/{}/entries_exits.json'.format(__constants.output_folder, participant_id, measurement_moment, task_id)
     if not os.path.isfile(input_file_name):
-        show_error('Input file for step 5 is not found. Run step 4 first.', progress)
+        show_error('Input file for step 5 is not found. Run step 4 first. {}'.format(input_file_name), progress)
 
-    input_file_name_gps_x_aois = '{}/{}/{}/df_gps_x_aois.csv'.format(__constants.output_folder, participant_id, task_id)
+    input_file_name_gps_x_aois = '{}/{}/{}/{}/df_gps_x_aois.csv'.format(__constants.output_folder, participant_id, measurement_moment, task_id)
     if not os.path.isfile(input_file_name):
         show_error('Input file for step 5 is not found. Run step 3 first.', progress)
 
@@ -35,8 +36,8 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
         'last_appearance_time',
         'total_appearance_duration',
         'is_hit',
-        'first_entry_time',
-        'time_to_first_entry',
+        'absolute_entry_time',
+        'entry_time',
         'amount_entries_exits',
         'total_dwell_duration',
         'total_diversion_duration',
@@ -69,11 +70,8 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
     for index, row in df.iterrows():
         ee = entries_and_exits[row['object_id']]
         if(len(ee) > 0):
-            first_entry_time = ee[0]
-            df.iloc[index, df.columns.get_loc('first_entry_time')] = first_entry_time
-
-    # Time to first entry
-    df['time_to_first_entry'] = df['first_entry_time'] - df['first_appearance_time']
+            absolute_entry_timeimeimeime = ee[0]
+            df.iloc[index, df.columns.get_loc('absolute_entry_timeime')] = absolute_entry_time
 
     # Set some 0's; we'll fill it later
     df['total_diversion_duration'] = 0
@@ -115,13 +113,19 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
 
                 index = df.index[df['object_id'] == aoi]
 
-                n = math.ceil(i/2)
+                n = str(math.ceil(i/2))
                 entry_n = previous_timestamp = timestamps[i - 1]
                 exit_n = current_timestamp = timestamps[i]
                 dwell_time_n = exit_n - entry_n
-                df.at[index, 'entry({})'.format(n)] = entry_n
-                df.at[index, 'exit({})'.format(n)] = exit_n
-                df.at[index, 'dwell_time({})'.format(n)] = dwell_time_n           
+
+                if(dwell_time_n > 0):
+                    # check if is higher than 0 for it may occur that
+                    # entry and exit timestamps are the same (in this case only 1 HIT has been detected)
+                    # for that particular AOI
+                    # only check if is higher than 0 when we 2 timestamps. if we have more, always add the timestamps
+                    df.loc[index, 'entry({})'.format(n)] = entry_n
+                    df.loc[index, 'exit({})'.format(n)] = exit_n
+                    df.loc[index, 'dwell_time({})'.format(n)] = dwell_time_n           
 
     progress.advance(task)
 
@@ -154,6 +158,9 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
 
     progress.advance(task)
 
+    # Entry time
+    df['entry_time'] = df['absolute_entry_timeime'] - df['first_appearance_time']
+
     # After that, filter short dwell_time(n)
     for i in range(sets_to_add):
         # for each set entry, exit, dwell
@@ -166,6 +173,10 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
                     df.at[index, 'dwell_time({})'.format(n)] = None
 
     progress.advance(task)
+
+    # output_temp_file_name = '{}/{}/{}/{}/{}_output_temp'.format(
+    #     __constants.output_folder, participant_id, measurement_moment, task_id, participant_id)
+    # df.to_csv(output_temp_file_name)
 
     # Now, delete empty columns
     df.dropna(how='all', axis=1, inplace=True)
@@ -207,12 +218,16 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
     df['is_hit'] = df['total_dwell_duration'] > 0
     df['is_hit'] = df['is_hit'].astype(int)
 
+    # If is not a hit, all cells in the same row after is_hit are meaningless, void them
+    df.loc[df['is_hit'] == 0, 'entry_time'] = None
+    df.loc[df['is_hit'] == 0, 'absolute_entry_time'] = None
+
     progress.advance(task)
 
     # Write to csv
     d = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-    output_file_name = '{}/{}/{}/{}_output_{}'.format(
-        __constants.output_folder, participant_id, task_id, participant_id, d)
+    output_file_name = '{}/{}/{}/{}/{}_{}_{}_output_{}_id_{}'.format(
+        __constants.output_folder, participant_id, measurement_moment, task_id, participant_id, measurement_moment, task_id, d, batch_id)
 
     # When is_hit = 0, all columns to the right of is_hit are not informative
     # To avoid miscommunication, we remove those columns
@@ -242,7 +257,7 @@ def generate_output(participant_id, task_id, aois_file, progress, task):
 
     progress.print("[green bold]Saved output to {}.csv".format(output_file_name))
 
-    if not platform.system() == 'Windows':
-        subprocess.call(['open', "{}.csv".format(output_file_name)])
+    # if not platform.system() == 'Windows':
+    #     subprocess.call(['open', "{}.csv".format(output_file_name)])
     
     progress.advance(task)

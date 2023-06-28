@@ -9,15 +9,15 @@ import matplotlib.pyplot as plt
 
 from utils.utils__general import show_error
 
-def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
-    input_file_name = '{}/{}/{}/merged_mf_gp.csv'.format(
-        __constants.input_folder, participant_id, task_id)
+def identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id, progress, task):
+    input_file_name = '{}/{}/{}/{}/merged_mf_gp.csv'.format(
+        __constants.input_folder, participant_id, measurement_moment, task_id)
 
-    output_file_name = '{}/{}/{}/gp.csv'.format(
-        __constants.input_folder, participant_id, task_id)
+    output_file_name = '{}/{}/{}/{}/gp.csv'.format(
+        __constants.input_folder, participant_id, measurement_moment, task_id)
 
-    text_file = '{}/{}/{}/number_of_filtered_rows.txt'.format(
-        __constants.output_folder, participant_id, task_id)
+    text_file = '{}/{}/{}/{}/number_of_filtered_rows.txt'.format(
+        __constants.output_folder, participant_id, measurement_moment, task_id)
     
     # Check if our input file exists
     if not os.path.isfile(input_file_name):
@@ -136,7 +136,7 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
             currentGapStartedAtIndex = np.NaN
 
     # Save gap indexes to file
-    gap_timestamps_file = '{}/{}/{}/gap_timestamps.json'.format(__constants.output_folder, participant_id, task_id)
+    gap_timestamps_file = '{}/{}/{}/{}/gap_timestamps.json'.format(__constants.output_folder, participant_id, measurement_moment, task_id)
 
     file_handle = open(gap_timestamps_file, "w")
     json.dump(gap_timestamps_to_save, file_handle)
@@ -149,8 +149,8 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
     if(pd.isna(df.iloc[0, df.columns.get_loc('true_x_scaled')])):
          for index, gp in df.iterrows():
              if(not pd.isna(df.iloc[index, df.columns.get_loc('true_x_scaled')])):
-                 df.at[0:index-1, 'true_x_scaled'] = df.iloc[index, df.columns.get_loc('true_x_scaled')]
-                 df.at[0:index-1, 'true_y_scaled'] = df.iloc[index, df.columns.get_loc('true_y_scaled')]
+                 df.loc[0:index-1, ('true_x_scaled')] = np.repeat(df.iloc[index, df.columns.get_loc('true_x_scaled')], index)
+                 df.loc[0:index-1, ('true_y_scaled')] = np.repeat(df.iloc[index, df.columns.get_loc('true_y_scaled')], index)
                  break
 
     # Interpolate to linear time scale
@@ -159,8 +159,8 @@ def identify_gaps_and_to_linear_time(participant_id, task_id, progress, task):
     # Gaps > 75ms +/- (__constants.add_gap_samples) seconds naar NaN
     # Now, check in the original dataframe where we have gaps (we saved this before)
     # NaN the x,y in rows where we know there is a gap with (__constants.add_gap_samples) seconds margin
-    gap_timestamps_file = '{}/{}/{}/gap_timestamps.json'.format(
-        __constants.output_folder, participant_id, task_id)
+    gap_timestamps_file = '{}/{}/{}/{}/gap_timestamps.json'.format(
+        __constants.output_folder, participant_id, measurement_moment, task_id)
     a_file = open(gap_timestamps_file, "r")
     gap_timestamps = json.loads(a_file.read())
 

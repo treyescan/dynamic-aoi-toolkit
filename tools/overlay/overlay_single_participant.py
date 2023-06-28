@@ -1,4 +1,4 @@
-import argparse, cv2, sys, math
+import argparse, cv2, sys, math, os.path
 import pandas as pd
 
 sys.path.append('../../')
@@ -24,23 +24,28 @@ participant_folder = args.participant
 start_frame = args.start_frame
 
 gaze_data_path = '{}/gp.csv'.format(participant_folder)
-# annotations_data_path = '{}/annotations.csv'.format(participant_folder)
+annotations_data_path = '{}/annotations.csv'.format(participant_folder)
+surface_5_data_path = '{}/gaze_positions_on_surface_Surface5WB.csv'.format(participant_folder)
 
 # Read data file
 df = pd.read_csv(data_path, header=0)
 df_gp = pd.read_csv(gaze_data_path, header=0)
-# df_a = pd.read_csv(annotations_data_path, header=0)
+
+if(os.path.isfile(annotations_data_path)):
+    df_a = pd.read_csv(annotations_data_path, header=0)
+    df_5 = pd.read_csv(surface_5_data_path)
+
+    # Get the first timestamp of surface 5
+    # If an annotations file is found, normalize the timestamp
+    if df_a['timestamp'][0] < 0:
+        df_a['actual_time'] = df_a['timestamp'] + abs(df_5.loc[0, 'gaze_timestamp'])
+    else:
+        df_a['actual_time'] = df_a['timestamp'] - abs(df_5.loc[0, 'gaze_timestamp'])
+    df_a['frame'] = df_a['actual_time']*__constants.frame_rate + 0.00001
+    df_a['frame'] = df_a['frame'].astype(int)
 
 # Prepare data
 df = prepare_aois_df(df)
-
-# NB: currently unused
-# if df_a['timestamp'][0] < 0:
-#     df_a['actual_time'] = df_a['timestamp'] + abs(df_gp.loc[0, 'gaze_timestamp'])
-# else:
-#     df_a['actual_time'] = df_a['timestamp'] - abs(df_gp.loc[0, 'gaze_timestamp'])
-# df_a['frame'] = df_a['actual_time']*__constants.frame_rate + 0.00001
-# df_a['frame'] = df_a['frame'].astype(int)
 
 # Read video
 cap = cv2.VideoCapture(video_path)
@@ -84,15 +89,22 @@ while(cap.isOpened()):
 
         if ret == True:
             overlays = df[df['Frame'] == frame_nr]
-          
-            # Draw if hazard button is pressed
-            # found_annotations = df_a[(df_a['frame'] >= frame_nr - 1) & (df_a['frame'] < frame_nr - 1 + 15)]
-            # print('--- found {} annotations on frame {}'.format(len(found_annotations), frame_nr - 1))
 
-            # if len(found_annotations) > 0:
-            #     cv2.rectangle(frame, (450, 0), (1200, 80), (0, 0, 255), -1, 1)
-            #     cv2.putText(frame, "HAZARD BUTTON PRESSED", (500, 50), 
-            #                     cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 4, cv2.LINE_AA);
+            gp_circle_color = (161, 254, 141)
+            gp_circle_size = 20
+          
+            # If we have found an annotations file
+            if(os.path.isfile(annotations_data_path)):
+                # Draw if hazard button is pressed
+                found_annotations = df_a[(df_a['frame'] >= frame_nr - 1) & (df_a['frame'] < frame_nr - 1 + 15)]
+                print('--- found {} annotations on frame {}'.format(len(found_annotations), frame_nr - 1))
+
+                if len(found_annotations) > 0:
+                    cv2.rectangle(frame, (450, 0), (1200, 80), (0, 0, 255), -1, 1)
+                    cv2.putText(frame, "HAZARD BUTTON PRESSED", (500, 50), 
+                                    cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 4, cv2.LINE_AA);
+                    gp_circle_color = (0, 0, 255)
+                    gp_circle_size = 40
 
             # Draw first GPs
             gaze_position_overlays = df_gp[df_gp['frame'] == frame_nr]
@@ -103,7 +115,7 @@ while(cap.isOpened()):
                     x = gaze_position['x'] + __constants.total_surface_width/2
                     y = __constants.total_surface_height - (gaze_position['y'] + __constants.total_surface_height/2) # change back to "old" coordinate system
 
-                    cv2.circle(frame, (int(x), int(y)), 20, (161, 254, 141), -1)
+                    cv2.circle(frame, (int(x), int(y)), gp_circle_size, gp_circle_color, -1)
 
             # Draw frame nr on frame
             cv2.rectangle(frame, (0, 0), (400, 80), (255, 255, 255), -1, 1)
