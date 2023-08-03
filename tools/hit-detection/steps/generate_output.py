@@ -70,7 +70,7 @@ def generate_output(participant_id, measurement_moment, task_id, aois_file, batc
     for index, row in df.iterrows():
         ee = entries_and_exits[row['object_id']]
         if(len(ee) > 0):
-            absolute_entry_timeimeimeime = ee[0]
+            absolute_entry_time = ee[0]
             df.iloc[index, df.columns.get_loc('absolute_entry_timeime')] = absolute_entry_time
 
     # Set some 0's; we'll fill it later
