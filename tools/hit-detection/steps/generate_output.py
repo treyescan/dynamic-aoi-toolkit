@@ -71,7 +71,7 @@ def generate_output(participant_id, measurement_moment, task_id, aois_file, batc
         ee = entries_and_exits[row['object_id']]
         if(len(ee) > 0):
             absolute_entry_time = ee[0]
-            df.iloc[index, df.columns.get_loc('absolute_entry_timeime')] = absolute_entry_time
+            df.iloc[index, df.columns.get_loc('absolute_entry_time')] = absolute_entry_time
 
     # Set some 0's; we'll fill it later
     df['total_diversion_duration'] = 0
@@ -159,7 +159,7 @@ def generate_output(participant_id, measurement_moment, task_id, aois_file, batc
     progress.advance(task)
 
     # Entry time
-    df['entry_time'] = df['absolute_entry_timeime'] - df['first_appearance_time']
+    df['entry_time'] = df['absolute_entry_time'] - df['first_appearance_time']
 
     # After that, filter short dwell_time(n)
     for i in range(sets_to_add):
