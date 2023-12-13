@@ -196,7 +196,7 @@ python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" -
 
 ### 4. AOI Hit detection
 
-<img src="flowchart.png" style="width: 300px" />
+<img src="assets/flowchart.png" style="width: 300px" />
 
 AOI hit detection provides a tool to calculate measures, such as dwell time and entry time. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With `merge_outputs.py` the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
 
@@ -214,7 +214,7 @@ python3 better-multi-analyse.py --st 1
 # NB: the multi-analyse.py script can be used (which is slower – not multi threaded) when the GUI can't be opened
 ```
 
-<img src="better-multi-analyse-screenshot.png" width="400">
+<img src="assets/better-multi-analyse-screenshot.png" width="400">
 
 **_Usage:_**
 
