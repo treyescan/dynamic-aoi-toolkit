@@ -185,7 +185,7 @@ python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --pa
 ```bash
 # for multiple participants
 cd tools/overlay/
-python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --task="{folder of participants}" --start_frame=1000 --moment="T1"
+python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --t="{folder of participants}" --start_frame=1000 --m="T1" --groupcolors --ellips
 ```
 
 **_Usage:_**

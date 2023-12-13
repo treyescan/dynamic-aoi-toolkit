@@ -9,15 +9,19 @@ import matplotlib.pyplot as plt
 
 from utils.utils__general import show_error
 
-def identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id, progress, task):
+def identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id, batch_id, progress, task):
     input_file_name = '{}/{}/{}/{}/merged_mf_gp.csv'.format(
         __constants.input_folder, participant_id, measurement_moment, task_id)
 
     output_file_name = '{}/{}/{}/{}/gp.csv'.format(
         __constants.input_folder, participant_id, measurement_moment, task_id)
 
-    text_file = '{}/{}/{}/{}/number_of_filtered_rows.txt'.format(
-        __constants.output_folder, participant_id, measurement_moment, task_id)
+    text_file = '{}/{}/{}/{}/number_of_filtered_rows_{}.txt'.format(
+        __constants.output_folder, participant_id, measurement_moment, task_id, batch_id)
+    
+    accuracy_file = '{}/{}/{}/{}/number_of_filtered_rows_{}.json'.format(
+        __constants.output_folder, participant_id, measurement_moment, task_id, batch_id)
+    accuracy_info = {}
     
     # Check if our input file exists
     if not os.path.isfile(input_file_name):
@@ -34,6 +38,7 @@ def identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id
     # Save the size of the original data set
     with open(text_file,"w+") as f:
         f.write('Total amount of rows: {} \n\n'.format(total_count))
+        accuracy_info['total_amount_rows'] = total_count
     
     # Save how many rows will be changed to NaN to a text file
     removed_NaN_count = df[df['confidence'] < __constants.confidence_threshold].shape[0]
@@ -41,6 +46,8 @@ def identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id
         percentage = round(removed_NaN_count/total_count*100, 2)
         f.write('Set position of {} rows ({}%) to NaN due to confidence below {} \n'.format(
             removed_NaN_count, percentage, __constants.confidence_threshold))
+        accuracy_info['no_rows_NaN_conf'] = removed_NaN_count
+        accuracy_info['perc_NaN_conf'] = percentage
 
     # Set X and Y to NaN when confidence < threshold
     df.loc[df['confidence'] < __constants.confidence_threshold, 'true_x_scaled'] = np.NaN
@@ -52,6 +59,8 @@ def identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id
         percentage = round(removed_NaN_count/total_count*100, 2)
         f.write('Set position of {} rows ({}%) to NaN due to on_screen == False \n'.format(
             removed_NaN_count, percentage))
+        accuracy_info['no_rows_NaN_onscreenfalse'] = removed_NaN_count
+        accuracy_info['perc_no_rows_NaN_onscreenfalse'] = percentage
 
     # Set X and Y to NaN when not looking on screen
     df.loc[df['on_screen'] == False, 'true_x_scaled'] = np.NaN
@@ -65,8 +74,9 @@ def identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id
     NaN_count = df[df['true_x_scaled'].isnull()].shape[0]
     with open(text_file,"a+") as f:
         percentage = round(NaN_count/total_count*100, 2)
-        f.write('Set position to NaN of {} rows in total ({}% of the original dataset) \n\n'.format(
-            NaN_count, percentage))
+        f.write('Set position to NaN of {} rows in total ({}% of the original dataset) \n\n'.format(NaN_count, percentage))
+        accuracy_info['total_NaN_beforeinterpolation'] = NaN_count
+        accuracy_info['perc_NaN_beforeinterpolation'] = percentage
  
     progress.advance(task)
 
@@ -155,6 +165,7 @@ def identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id
 
     # Interpolate to linear time scale
     gp = to_lin_time(progress, df, output_file_name, participant_id, task_id)
+    total_count_after_interpolating_to_linear_time = gp.shape[0]
     
     # Gaps > 75ms +/- (__constants.add_gap_samples) seconds naar NaN
     # Now, check in the original dataframe where we have gaps (we saved this before)
@@ -187,18 +198,37 @@ def identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id
     NaN_count_with_extended_gaps = gp[gp['x'].isnull()].shape[0]
     with open(text_file,"a+") as f:
 
-        f.write('After interpolation to linear time, set position of {} rows set to NaN\n'
-            .format(rows_to_NaN_without_extended_gap))
+        percentage = round(rows_to_NaN_without_extended_gap/total_count*100, 2)
+        f.write('After interpolation to linear time and filling small gaps, {} rows ({}%) are kept at NaN\n'
+            .format(rows_to_NaN_without_extended_gap, percentage))
+        accuracy_info['total_NaN_afterinterpolation'] = rows_to_NaN_without_extended_gap
+        accuracy_info['perc_total_NaN_afterinterpolation'] = percentage
 
-        f.write('{} interpolated rows are left in the dataset (these where < threshold of {} seconds)\n'
+        f.write('{} interpolated rows are left in the original dataset (these where < threshold of {} seconds)\n'
             .format(interpolated_rows_count, __constants.valid_gap_threshold))
+        accuracy_info['total_interpolated_rows_left'] = interpolated_rows_count
 
         percentage = round(NaN_count_with_extended_gaps/total_count*100, 2)
-        f.write('Set position of {} rows ({}% of the original dataset) to NaN (after extending the gaps)\n'
-            .format(NaN_count_with_extended_gaps, percentage))
+        percentage_gp_after_interpolating_to_linear_time = round(NaN_count_with_extended_gaps/total_count_after_interpolating_to_linear_time*100, 2)
+
+        # Total count and percentage based on total_count (original dataset)
+        f.write(f'\nSet position of {NaN_count_with_extended_gaps} rows to NaN (after extending the gaps)\n')
+        # percentage based on total_count_after_interpolating_to_linear_time
+        f.write(f'- that is {percentage}% of the original dataset,\n')
+        f.write(f'- and {percentage_gp_after_interpolating_to_linear_time}% of the dataset after interpolating to linear time\n')
+        accuracy_info['total_NaN_afterinterpolation_aftergapextension'] = NaN_count_with_extended_gaps
+        accuracy_info['perc_NaN_afterinterpolation_aftergapextenstion'] = percentage
+        accuracy_info['perc_NaN_afterinterpolation_aftergapextenstion_compared_to_gp_after_interp_to_lintime'] = percentage_gp_after_interpolating_to_linear_time
 
     # Save the GP to a file
     gp.to_csv(output_file_name)
+
+    # Save accuracy info to json
+    with open(accuracy_file, "w") as accuracy_file:
+        accuracy_info['participant_id'] = participant_id
+        accuracy_info['measurement_moment'] = measurement_moment
+        accuracy_info['task_id'] = task_id
+        json.dump(accuracy_info, accuracy_file, indent = 4) 
 
     progress.print("Done! We will start outputting the dataframe to a csv file. This will take a second.")
     progress.print('[bold green]We are done! The new csv is outputted to {} and contains {} rows.'.format(output_file_name, len(gp)))

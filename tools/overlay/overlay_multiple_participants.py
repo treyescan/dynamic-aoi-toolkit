@@ -1,11 +1,18 @@
 import argparse, cv2, sys, math, glob, re
 import pandas as pd
+import numpy as np
+import os.path
 
 sys.path.append('../../')
 import __constants
 from utils.utils__aois import prepare_aois_df
 from utils.utils__margin_calculator import correct_aoi
 from utils.utils__resize_with_aspect_ratio import ResizeWithAspectRatio
+
+def eigsorted(cov):
+    vals, vecs = np.linalg.eigh(cov)
+    order = vals.argsort()[::-1]
+    return vals[order], vecs[:,order]
 
 # BGR colors
 colors = [
@@ -45,32 +52,36 @@ FRAME_WIDTH = int(__constants.total_surface_width * 0.2)
 parser = argparse.ArgumentParser()
 parser.add_argument('--video', help='path of video file', type=str)
 parser.add_argument('--aois', help='path of the AOI csv file', type=str)
-parser.add_argument('--moment', help='of which measurement moment do we need to plot gaze positions', type=str)
-parser.add_argument('--task', help='of which task do we need to plot gaze positions', type=str)
+parser.add_argument('--m', help='of which measurement moment do we need to plot gaze positions', type=str)
+parser.add_argument('--t', help='of which task do we need to plot gaze positions', type=str)
 parser.add_argument('--start_frame', help='start playing at frame (0 = start)', type=int, default=0)
+parser.add_argument('--ellips', help='ellips yes/no', action='store_true')
+parser.add_argument('--groupcolors', help='group color by glaucoma yes/no', action='store_true')
 
 args = parser.parse_args()
 video_path = args.video
 data_path = args.aois
-measurement_moment = args.moment 
-task = args.task
+measurement_moment = args.m 
+task = args.t
 start_frame = args.start_frame
+ellips = args.ellips
+groupcolors = args.groupcolors
+
+if(ellips and not groupcolors):
+    raise Exception("Ellipses can't be plotted when grouping by colors is not enabled. Either remove --ellips or add --groupcolors as param.")
 
 # Open all gaze position files (gp.csv in {task} folder of all participants)
-dfs_gp = []
+dfs_gp = {}
+dfs_gp_information = {}
+
 pattern = "{}/*/{}/{}/gp.csv".format(__constants.input_folder, measurement_moment, task)
 gaze_position_files = glob.glob(pattern)
-dfs_gp_information = []
 
 # Prepare output file
 output_file_name = 'gp_overlay_{}_{}.mp4'.format(measurement_moment, task)
 
 for gp_file in gaze_position_files:
-    # Use this regex for "P-009" etc
     regex = re.findall("(P-[0-9]..)\/(T[0-9])\/([a-zA-Z0-9]*)", gp_file)
-
-    # Use this regex for "CC001g" etc
-    # regex = re.findall("(CC[0-9]..[gc])\/(T[0-9])\/([a-zA-Z0-9]*)", gp_file)
 
     # Get participant ID
     participant_id = regex[0][0] 
@@ -79,8 +90,8 @@ for gp_file in gaze_position_files:
     df_gp = pd.read_csv(gp_file)
 
     # Add participant ID and GP's
-    dfs_gp.append(df_gp)
-    dfs_gp_information.append(participant_id)
+    dfs_gp[gp_file] = df_gp
+    dfs_gp_information[gp_file] = participant_id
 
 # Read data file
 df = pd.read_csv(data_path, header=0)
@@ -106,7 +117,10 @@ if (cap.isOpened()== False):
     print("Error opening video file") 
 else:
     print("Press Q to quit, P to pause\n") 
-    print("Red: must be seen, Blue: may be seen") 
+    print("RED BOX: must be seen, BLUE BOX: may be seen") 
+
+    if(groupcolors):
+        print("RED DOT/ELLIPS = Glaucoma, BLUE DOT/ELLIPS = Control")
 
 paused = False
 
@@ -133,14 +147,37 @@ while(cap.isOpened()):
         
             # Draw first GPs
             gp_index = 0
-            for df_gp in dfs_gp:
+
+            g_x = []
+            g_y = []
+            c_x = []
+            c_y = []
+
+            for key, df_gp in dfs_gp.items():
                 if('frame' in df_gp.columns):
                     gaze_position_overlays = df_gp[df_gp['frame'] == frame_nr]
-                    print('found {} gaze positions around frame {}'.format(len(gaze_position_overlays), frame_nr))
+                    # print('found {} gaze positions around frame {}'.format(len(gaze_position_overlays), frame_nr))
 
+                    # set color
                     color = colors[gp_index % len(colors)]
-                    participant_id_label = dfs_gp_information[gp_index]
-                    printed_label = False # flag to see if we have printed the label, we should do this once per frame per colored circle
+
+                    # if --groupcolors, check 
+                    # if G or C file exists in participant folder
+                    # change the colors accordlingly 
+                    if groupcolors:
+                        # default case
+                        isGlaucomaGP = False
+                        color = (255, 90, 90)
+
+                        participant_id = dfs_gp_information[key]
+
+                        if os.path.isfile(f'{__constants.input_folder}/{participant_id}/glaucoma'):
+                            isGlaucomaGP = True
+                            # print('Glaucoma patient')
+                            color = (90, 90, 255)
+
+                    # flag to see if we have printed the label, we should do this once per frame per colored circle
+                    printed_label = False 
 
                     for index, gaze_position in gaze_position_overlays.iterrows():
                         if not math.isnan(gaze_position['x']) and not math.isnan(gaze_position['y']):
@@ -150,11 +187,49 @@ while(cap.isOpened()):
                             cv2.circle(frame, (int(x), int(y)), 20, color, -1)
 
                             if not printed_label:
-                                cv2.putText(frame, participant_id_label, (int(x), int(y)+50), \
+                                cv2.putText(frame, participant_id, (int(x), int(y)+50), \
                                     cv2.FONT_HERSHEY_SIMPLEX, .8, color, 2, cv2.LINE_AA);
                                 printed_label = True
+
+                            if groupcolors:
+                                if isGlaucomaGP:
+                                    g_x.append(int(x))
+                                    g_y.append(int(y))
+                                else:
+                                    c_x.append(int(x))
+                                    c_y.append(int(y))
                             
                     gp_index = gp_index + 1
+
+            if ellips:
+                # Draw ellipses
+                # print(g_x, g_y)
+                # print(c_x, c_y)
+                nstd = 1
+
+                # Draw ellipse around control data
+                if(len(c_x) > 0 and len(c_y) > 0):
+                    c_cov = np.cov(c_x, c_y)
+                    c_vals, c_vecs = eigsorted(c_cov)
+                    c_theta = np.degrees(np.arctan2(*c_vecs[:,0][::-1]))
+                    # c_w, c_h = 2 * nstd * np.sqrt(c_vals)
+                    c_w = nstd * np.std(c_x)
+                    c_h = nstd * np.std(c_y)
+                    c_center = (int(np.mean(c_x)), int(np.mean(c_y)))
+                    c_axesLength = (int(c_w), int(c_h))
+                    cv2.ellipse(frame, c_center, c_axesLength, c_theta, 0, 360, (255, 0, 0), 20)
+
+                # Draw ellipse around glaucoma data
+                if(len(g_x) > 0 and len(g_y) > 0):
+                    g_cov = np.cov(g_x, g_y)
+                    g_vals, g_vecs = eigsorted(g_cov)
+                    g_theta = np.degrees(np.arctan2(*g_vecs[:,0][::-1]))
+                    # g_w, g_h = 2 * nstd * np.sqrt(g_vals)
+                    g_w = nstd * np.std(g_x)
+                    g_h = nstd * np.std(g_y)
+                    g_center = (int(np.mean(g_x)), int(np.mean(g_y)))
+                    g_axesLength = (int(g_w), int(g_h))
+                    cv2.ellipse(frame, g_center, g_axesLength, g_theta, 0, 360, (0, 0, 255), 20)
 
             # Draw frame nr on frame
             cv2.rectangle(frame, (0, 0), (400, 80), (255, 255, 255), -1, 1)
@@ -205,7 +280,7 @@ while(cap.isOpened()):
             cv2.moveWindow('Frame', 20, 20)
 
             # Writing the resulting frame
-            print('saving frame {}/{}'.format(frame_nr, total_frames))
+            # print('saving frame {}/{}'.format(frame_nr, total_frames))
             out.write(frame)
 
             # time.sleep(.5)
