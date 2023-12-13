@@ -19,6 +19,7 @@ This toolkit includes tools to analyse Pupil Labs Core eye tracking gaze data in
    1. [AOI Hit detection](#4-aoi-hit-detection)
       1. Analyze metrics such as dwell time, entry time etc.
       1. Merge outputs
+      1. Merge accuracy
    1. [Apriltags on video](#5-apriltags-on-video)
    1. [Screen analysis](#6-screen-analysis)
 1. [Citation](#3-citation)
@@ -202,9 +203,11 @@ python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" -
 
 AOI hit detection provides a tool to calculate measures, such as dwell time and entry time. For every gaze position, the corresponding frame is checked for an AOI hit within the AOIs as defined by the AOI selectors. With `merge_outputs.py` the lastly generated output file of each participant is merged into one output file for statistical analysis purposes.
 
+We may manually add a `batch_id` to distinguish between different runs.
+
 ```bash
 cd hit-detection
-python3 analyse.py --p P-006 --mm T1 --t Deel1 --st 1
+python3 analyse.py --p P-006 --mm T1 --t Deel1 --st 1 --id {batch_id}
 
 # to see what arguments we may provide
 python3 analyse.py -h
@@ -241,7 +244,20 @@ python3 better-multi-analyse.py --st 1
 
 ```bash
 cd hit-detection
-python3 merge_outputs.py
+python3 merge_outputs.py --id={batch_id}
+```
+
+**_Usage:_**
+
+1. Make sure each participant folder has the file to be merged, as the newest output file in the folder.
+
+#### Merge accuracy
+
+The hit detection outputs accuracy files for each participant. An aggregate merge script is provided to facilitate easier processing in statistical software (e.g. SPSS).
+
+```bash
+cd hit-detection
+python3 merge_accuracy.py --id={batch_id}
 ```
 
 **_Usage:_**
