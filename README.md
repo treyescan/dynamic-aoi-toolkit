@@ -1,4 +1,4 @@
-# Dynamic AOI Toolkit v1.1
+# Dynamic AOI Toolkit v1.2
 
 This toolkit includes tools to analyse Pupil Labs Core eye tracking gaze data in relation to dynamic areas of interest (AOI) on a wide screen. The tools included are: (1) AOI selector (both automatic and manual), (2) overlay AOIs and gaze on the task video, and (3) AOI hit detection.
 
@@ -186,6 +186,8 @@ python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --pa
 # for multiple participants
 cd tools/overlay/
 python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --t="{folder of participants}" --start_frame=1000 --m="T1" --groupcolors --ellips
+# By adding --ellips, ellipses with std will be drawn
+# By adding --groupcolors, participants will be grouped to glaucoma/control
 ```
 
 **_Usage:_**
