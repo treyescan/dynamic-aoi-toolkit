@@ -183,6 +183,8 @@ python3 overlay_single_participant.py --video="video.mp4" --aois="aois.csv" --pa
 
 #### Overlaying gaze positions of multiple participants and AOIs over a video
 
+<img src="./assets/overlay-screenshot.png" />
+
 ```bash
 # for multiple participants
 cd tools/overlay/
