@@ -55,7 +55,7 @@ parser.add_argument('--aois', help='path of the AOI csv file', type=str)
 parser.add_argument('--m', help='of which measurement moment do we need to plot gaze positions', type=str)
 parser.add_argument('--t', help='of which task do we need to plot gaze positions', type=str)
 parser.add_argument('--start_frame', help='start playing at frame (0 = start)', type=int, default=0)
-parser.add_argument('--ellips', help='ellips yes/no', action='store_true')
+parser.add_argument('--ellipse', help='ellipse yes/no', action='store_true')
 parser.add_argument('--groupcolors', help='group color by glaucoma yes/no', action='store_true')
 
 args = parser.parse_args()
@@ -64,7 +64,7 @@ data_path = args.aois
 measurement_moment = args.m 
 task = args.t
 start_frame = args.start_frame
-ellips = args.ellips
+ellips = args.ellipse
 groupcolors = args.groupcolors
 
 if(ellips and not groupcolors):
