@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/459572080.svg)](https://zenodo.org/doi/10.5281/zenodo.7019195)
+
 # Dynamic AOI Toolkit v1.2.0
 
 This toolkit includes tools to analyse Pupil Labs Core eye tracking gaze data in relation to dynamic areas of interest (AOI) on a wide screen. The tools included are: (1) AOI selector (both automatic and manual), (2) overlay AOIs and gaze on the task video, and (3) AOI hit detection.
@@ -308,11 +310,12 @@ python3 border_apriltags.py --name="../videos/vid.mp4" --cols=8 --rows=2 --defau
 ## 3. Citation
 
 ```
-Faraji, Y., & van Rijn, J. W. (2022). Dynamic AOI Toolkit v1.0.0 (Version v1.0.0) [Computer software]. https://doi.org/10.5281/zenodo.8029272
+Faraji, Y., & van Rijn, J. W. (2024). Dynamic AOI Toolkit v1.2.0 (v1.2.0). Zenodo. https://doi.org/10.5281/zenodo.10535707
 ```
 
 - DOI v1.0.0: `10.5281/zenodo.7019196`
 - DOI V1.1.0: `10.5281/zenodo.8029272`
+- DOI V1.2.0: `10.5281/zenodo.10535707`
 
 ## 4. Contribution
 
