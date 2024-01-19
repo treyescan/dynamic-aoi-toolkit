@@ -4,7 +4,6 @@ import argparse
 sys.path.append('../../')
 
 from rich.progress import Progress, TimeElapsedColumn, BarColumn, TimeRemainingColumn
-from rich.prompt import Confirm
 
 # our own utilities needed
 from utils.utils__general import \
@@ -71,7 +70,7 @@ with progress_instance as progress:
 
     #### 4) Identify (valid) gaps in the gaze positions data
     if(we_are_not_skipping_task(4, starting_task, progress, tasks)):
-        identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id, progress, tasks[2])
+        identify_gaps_and_to_linear_time(participant_id, measurement_moment, task_id, batch_id, progress, tasks[2])
 
     #### 5) With the AOIs and the GPs: identify hits in the AOIs
     if(we_are_not_skipping_task(5, starting_task, progress, tasks)):
