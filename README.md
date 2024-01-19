@@ -170,7 +170,7 @@ python3 overlay_only_aois.py --video="video.mp4" --aois="aois.csv" --start_frame
 
 The single particpant overlay script generates a video based on the video of the task. The gaze positions (`{particpant folder}/gp.csv`) and AOI's will be overlayed, as well as an indicator whether or not the hazard button is pressed. For this, the PupilLabs annotations are used (`{particpant folder}/annotations.csv`).
 
-> TODO: insert screenshot of single particpant overlay
+<img src="assets/example.gif" />
 
 ```bash
 # for one participant
@@ -195,11 +195,11 @@ cd tools/overlay/
 python3 overlay_multiple_participants.py --video="video.mp4" --aois="aois.csv" --t="{folder of participants}" --m="T1" --groupcolors --ellipse
 ```
 
-| Optional params | Description |
-| --- | --- |
-| --start_frame=1000 | When set, the video will start exporting from this frame. |
-| --ellipse | When set, an ellipse will be drawn around the gaze points of all participants. The center x and y are the mean x and y of all gaze points, the axes length are the standard deviation. The orientation is determined by calculting the angle of the largest eigenvector.  |
-| --groupcolors | When set, participants will be color grouped to glaucoma/control groups. |
+| Optional params    | Description                                                                                                                                                                                                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| --start_frame=1000 | When set, the video will start exporting from this frame.                                                                                                                                                                                                                |
+| --ellipse          | When set, an ellipse will be drawn around the gaze points of all participants. The center x and y are the mean x and y of all gaze points, the axes length are the standard deviation. The orientation is determined by calculting the angle of the largest eigenvector. |
+| --groupcolors      | When set, participants will be color grouped to glaucoma/control groups.                                                                                                                                                                                                 |
 
 **_Usage:_**
 
